@@ -1,0 +1,106 @@
+.stat-card {
+    background: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-lg);
+    transition: all var(--transition-base);
+    animation: fadeIn 0.5s ease forwards;
+}
+
+.stat-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+}
+
+.stat-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-md);
+}
+
+.stat-card-title {
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    color: var(--color-text-secondary);
+}
+
+.stat-card-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.stat-icon-primary {
+    background: var(--color-primary-100);
+    color: var(--color-primary);
+}
+
+.stat-icon-accent {
+    background: #fff3e6;
+    color: var(--color-accent);
+}
+
+.stat-icon-info {
+    background: #dbeafe;
+    color: var(--color-info);
+}
+
+.stat-icon-warning {
+    background: #fef3c7;
+    color: var(--color-warning);
+}
+
+.stat-icon-danger {
+    background: #fee2e2;
+    color: var(--color-danger);
+}
+
+.stat-icon-success {
+    background: #dcfce7;
+    color: var(--color-success);
+}
+
+.stat-card-value {
+    font-size: var(--font-size-3xl);
+    font-weight: 800;
+    color: var(--color-text-primary);
+    line-height: 1;
+    margin-bottom: var(--space-sm);
+}
+
+.stat-card-unit {
+    font-size: var(--font-size-lg);
+    font-weight: 500;
+    color: var(--color-text-tertiary);
+    margin-left: 4px;
+}
+
+.stat-card-trend {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: var(--radius-full);
+}
+
+.trend-up {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.trend-down {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.trend-label {
+    font-weight: 400;
+    color: var(--color-text-tertiary);
+    margin-left: 4px;
+}
