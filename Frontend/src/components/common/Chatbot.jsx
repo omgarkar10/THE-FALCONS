@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
 import { MessageSquare, X, Send, Mic, MicOff, Bot, User, Loader, Volume2 } from 'lucide-react';
-import api from '../../services/api';
 import './Chatbot.css';
+
+const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
 
 const systemPrompt = `You are AgroVault AI Assistant, a helpful chatbot for a smart agricultural warehouse management platform. You help warehouse managers and consumers with:
 - Inventory management and stock queries
@@ -92,20 +93,43 @@ const Chatbot = () => {
         setInput('');
         setLoading(true);
 
+        const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+
+        if (!apiKey) {
+            setMessages((prev) => [
+                ...prev,
+                { role: 'assistant', content: '⚠️ Gemini API key not configured. Add `VITE_GEMINI_API_KEY` to your `.env` file in the Frontend directory.\n\nExample:\n```\nVITE_GEMINI_API_KEY=your_api_key_here\n```' },
+            ]);
+            setLoading(false);
+            return;
+        }
+
         try {
-            const historyForBackend = messages.map((m) => ({
-                role: m.role,
-                content: m.content,
+            const conversationHistory = messages.map((m) => ({
+                role: m.role === 'assistant' ? 'model' : 'user',
+                parts: [{ text: m.content }],
             }));
 
-            const response = await api.post('/chat', {
-                message: userMessage.content,
-                history: historyForBackend,
+            const response = await fetch(`${GEMINI_API_URL}?key=${apiKey}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    system_instruction: { parts: [{ text: systemPrompt }] },
+                    contents: [
+                        ...conversationHistory,
+                        { role: 'user', parts: [{ text: userMessage.content }] },
+                    ],
+                    generationConfig: {
+                        temperature: 0.7,
+                        maxOutputTokens: 1024,
+                    },
+                }),
             });
 
-            const assistantText = response.data?.reply;
+            const data = await response.json();
 
-            if (assistantText) {
+            if (data.candidates && data.candidates[0]?.content?.parts?.[0]?.text) {
+                const assistantText = data.candidates[0].content.parts[0].text;
                 setMessages((prev) => [...prev, { role: 'assistant', content: assistantText }]);
             } else {
                 setMessages((prev) => [
@@ -114,10 +138,9 @@ const Chatbot = () => {
                 ]);
             }
         } catch (error) {
-            const errorMessage = error.response?.data?.message || error.message || 'Unknown error';
             setMessages((prev) => [
                 ...prev,
-                { role: 'assistant', content: `Error connecting to AI backend: ${errorMessage}.` },
+                { role: 'assistant', content: `Error connecting to AI: ${error.message}. Please check your API key and network connection.` },
             ]);
         }
 
