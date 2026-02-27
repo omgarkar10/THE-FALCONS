@@ -18,6 +18,7 @@ import WarehouseStorage from './pages/warehouse/Storage';
 import WarehouseAnalytics from './pages/warehouse/Analytics';
 import WarehouseAlerts from './pages/warehouse/Alerts';
 import WarehouseSettings from './pages/warehouse/Settings';
+import WarehouseLogistics from './pages/warehouse/Logistics';
 
 // Consumer Pages
 import ConsumerDashboard from './pages/consumer/Dashboard';
@@ -25,6 +26,7 @@ import ConsumerInventory from './pages/consumer/Inventory';
 import ConsumerShipments from './pages/consumer/Shipments';
 import ConsumerQuality from './pages/consumer/Quality';
 import ConsumerAlerts from './pages/consumer/Alerts';
+import ConsumerWarehouses from './pages/consumer/Warehouses';
 
 function App() {
   return (
@@ -45,6 +47,7 @@ function App() {
             <Route path="/warehouse/dashboard" element={<WarehouseDashboard />} />
             <Route path="/warehouse/inventory" element={<WarehouseInventory />} />
             <Route path="/warehouse/storage" element={<WarehouseStorage />} />
+            <Route path="/warehouse/logistics" element={<WarehouseLogistics />} />
             <Route path="/warehouse/analytics" element={<WarehouseAnalytics />} />
             <Route path="/warehouse/alerts" element={<WarehouseAlerts />} />
             <Route path="/warehouse/settings" element={<WarehouseSettings />} />
@@ -57,6 +60,7 @@ function App() {
             <Route path="/consumer/inventory" element={<ConsumerInventory />} />
             <Route path="/consumer/shipments" element={<ConsumerShipments />} />
             <Route path="/consumer/quality" element={<ConsumerQuality />} />
+            <Route path="/consumer/warehouses" element={<ConsumerWarehouses />} />
             <Route path="/consumer/alerts" element={<ConsumerAlerts />} />
             <Route path="/consumer" element={<Navigate to="/consumer/dashboard" replace />} />
           </Route>

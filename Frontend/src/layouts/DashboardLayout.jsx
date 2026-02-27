@@ -1,5 +1,6 @@
 import { Outlet } from 'react-router-dom';
 import Sidebar from '../components/common/Sidebar';
+import Chatbot from '../components/common/Chatbot';
 import './DashboardLayout.css';
 
 const DashboardLayout = ({ role }) => {
@@ -9,6 +10,7 @@ const DashboardLayout = ({ role }) => {
             <main className="dashboard-main">
                 <Outlet />
             </main>
+            <Chatbot />
         </div>
     );
 };

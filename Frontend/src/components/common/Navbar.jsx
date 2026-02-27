@@ -30,8 +30,6 @@ const Navbar = () => {
                     <button onClick={() => scrollTo('features')}>Features</button>
                     <button onClick={() => scrollTo('use-cases')}>Use Cases</button>
                     <button onClick={() => scrollTo('how-it-works')}>How It Works</button>
-                    <button onClick={() => scrollTo('pricing')}>Pricing</button>
-                    <button onClick={() => scrollTo('testimonials')}>Testimonials</button>
                     <button onClick={() => scrollTo('faq')}>FAQ</button>
                 </div>
 
