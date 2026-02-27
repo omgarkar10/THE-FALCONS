@@ -1,0 +1,175 @@
+/* Dashboard Shared Styles */
+.dashboard-page {
+    animation: fadeIn 0.4s ease;
+}
+
+.kpi-grid {
+    margin-bottom: var(--space-lg);
+}
+
+.chart-row {
+    margin-bottom: var(--space-lg);
+}
+
+.bottom-row {
+    margin-bottom: var(--space-lg);
+}
+
+.chart-card {
+    padding: var(--space-lg);
+}
+
+.chart-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: var(--space-lg);
+}
+
+.chart-header h3 {
+    font-size: var(--font-size-base);
+    font-weight: 700;
+    margin-bottom: 2px;
+}
+
+.chart-header p {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-tertiary);
+}
+
+.chart-legend-inline {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: var(--font-size-xs);
+    color: var(--color-text-tertiary);
+}
+
+.legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+/* Silo Cards */
+.silo-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-sm);
+}
+
+.silo-card {
+    padding: var(--space-md);
+    border: 1px solid var(--color-border-light);
+    border-radius: var(--radius-md);
+    transition: all var(--transition-fast);
+}
+
+.silo-card:hover {
+    box-shadow: var(--shadow-sm);
+}
+
+.silo-normal {
+    border-left: 3px solid var(--color-success);
+}
+
+.silo-warning {
+    border-left: 3px solid var(--color-warning);
+}
+
+.silo-critical {
+    border-left: 3px solid var(--color-danger);
+}
+
+.silo-active {
+    border-left: 3px solid var(--color-info);
+}
+
+.silo-card-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+
+.silo-name {
+    font-weight: 700;
+    font-size: var(--font-size-sm);
+}
+
+.silo-crop {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-tertiary);
+    margin-bottom: var(--space-sm);
+}
+
+.silo-metrics {
+    display: flex;
+    gap: var(--space-md);
+    margin-bottom: var(--space-sm);
+}
+
+.silo-metric {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+}
+
+.silo-capacity-bar {
+    height: 4px;
+    background: var(--color-bg-secondary);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 4px;
+}
+
+.silo-capacity-fill {
+    height: 100%;
+    background: var(--color-primary);
+    border-radius: 2px;
+    transition: width 0.5s ease;
+}
+
+.silo-warning .silo-capacity-fill {
+    background: var(--color-warning);
+}
+
+.silo-critical .silo-capacity-fill {
+    background: var(--color-danger);
+}
+
+.silo-capacity-label {
+    font-size: 10px;
+    color: var(--color-text-tertiary);
+}
+
+/* Page Actions */
+.page-actions {
+    display: flex;
+    gap: var(--space-md);
+    align-items: center;
+}
+
+.filter-group {
+    display: flex;
+    gap: var(--space-sm);
+    align-items: center;
+}
+
+.filter-select {
+    padding: 8px 12px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: white;
+    color: var(--color-text-primary);
+    font-size: var(--font-size-sm);
+    cursor: pointer;
+}
+
+.filter-select:focus {
+    border-color: var(--color-primary);
+    outline: none;
+}
