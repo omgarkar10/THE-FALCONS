@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Plus, Filter } from 'lucide-react';
 import DataTable from '../../components/common/DataTable';
-import { mockInventory } from '../../data/mockData';
+import api from '../../services/api';
 import './Dashboard.css';
 
 const categories = ['All', 'Grains', 'Oilseeds', 'Fruits', 'Vegetables', 'Fibers'];
@@ -11,7 +11,7 @@ const columns = [
     { header: 'Item Name', accessor: 'name' },
     { header: 'Category', accessor: 'category' },
     { header: 'Location', accessor: 'location' },
-    { header: 'Quantity', accessor: 'quantity', render: (row) => `${row.quantity.toLocaleString()} ${row.unit}` },
+    { header: 'Quantity', accessor: 'quantity', render: (row) => `${row.quantity.toLocaleString()} ${row.unit || 'tons'}` },
     {
         header: 'Quality',
         accessor: 'qualityStatus',
@@ -29,11 +29,71 @@ const columns = [
 ];
 
 const Inventory = () => {
+    const [inventoryData, setInventoryData] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
     const [category, setCategory] = useState('All');
     const [status, setStatus] = useState('All');
-    const [showModal, setShowModal] = useState(false);
 
-    const filtered = mockInventory.filter((item) => {
+    // Modal & Form State
+    const [showModal, setShowModal] = useState(false);
+    const [newItemName, setNewItemName] = useState('');
+    const [newItemCategory, setNewItemCategory] = useState(categories[1]);
+    const [newItemLocation, setNewItemLocation] = useState('');
+    const [newItemQuantity, setNewItemQuantity] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const fetchInventory = async () => {
+        try {
+            setLoading(true);
+            const response = await api.get('/inventory');
+            setInventoryData(response.data);
+            setError(null);
+        } catch (err) {
+            console.error('Error fetching inventory:', err);
+            setError('Failed to load inventory data');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchInventory();
+    }, []);
+
+    const handleAddAsset = async (e) => {
+        e.preventDefault();
+        setIsSubmitting(true);
+        try {
+            const newItem = {
+                name: newItemName,
+                category: newItemCategory,
+                location: newItemLocation,
+                quantity: Number(newItemQuantity),
+                unit: 'tons',
+                qualityStatus: 'Good'
+            };
+            await api.post('/inventory', newItem);
+
+            // Reset form
+            setNewItemName('');
+            setNewItemCategory(categories[1]);
+            setNewItemLocation('');
+            setNewItemQuantity('');
+            setShowModal(false);
+
+            // Re-fetch data
+            fetchInventory();
+        } catch (err) {
+            console.error('Error adding asset:', err);
+            alert('Failed to add asset. Please try again.');
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    const filtered = inventoryData.filter((item) => {
         if (category !== 'All' && item.category !== category) return false;
         if (status !== 'All' && item.qualityStatus !== status) return false;
         return true;
@@ -62,36 +122,77 @@ const Inventory = () => {
                 </div>
             </div>
 
-            <DataTable columns={columns} data={filtered} searchPlaceholder="Search inventory..." />
+            {error ? (
+                <div className="error-message">{error}</div>
+            ) : loading ? (
+                <div>Loading inventory...</div>
+            ) : (
+                <DataTable columns={columns} data={filtered} searchPlaceholder="Search inventory..." />
+            )}
 
             {/* Add Asset Modal */}
             {showModal && (
-                <div className="modal-overlay" onClick={() => setShowModal(false)}>
+                <div className="modal-overlay" onClick={() => !isSubmitting && setShowModal(false)}>
                     <div className="modal-card" onClick={(e) => e.stopPropagation()}>
                         <h2>Add New Asset</h2>
                         <p style={{ color: 'var(--color-text-secondary)', marginBottom: 'var(--space-lg)' }}>Enter the details for the new inventory item</p>
-                        <form className="auth-form" onSubmit={(e) => { e.preventDefault(); setShowModal(false); }}>
+                        <form className="auth-form" onSubmit={handleAddAsset}>
                             <div className="form-group">
                                 <label>Item Name</label>
-                                <div className="input-wrapper"><input type="text" placeholder="e.g. Organic Wheat" required /></div>
+                                <div className="input-wrapper">
+                                    <input
+                                        type="text"
+                                        placeholder="e.g. Organic Wheat"
+                                        value={newItemName}
+                                        onChange={(e) => setNewItemName(e.target.value)}
+                                        required
+                                        disabled={isSubmitting}
+                                    />
+                                </div>
                             </div>
                             <div className="form-group">
                                 <label>Category</label>
-                                <select className="filter-select" style={{ width: '100%', padding: '12px' }}>
-                                    {categories.filter(c => c !== 'All').map(c => <option key={c}>{c}</option>)}
+                                <select
+                                    className="filter-select"
+                                    style={{ width: '100%', padding: '12px' }}
+                                    value={newItemCategory}
+                                    onChange={(e) => setNewItemCategory(e.target.value)}
+                                    disabled={isSubmitting}
+                                >
+                                    {categories.filter(c => c !== 'All').map(c => <option key={c} value={c}>{c}</option>)}
                                 </select>
                             </div>
                             <div className="form-group">
                                 <label>Location</label>
-                                <div className="input-wrapper"><input type="text" placeholder="e.g. Silo A" required /></div>
+                                <div className="input-wrapper">
+                                    <input
+                                        type="text"
+                                        placeholder="e.g. Silo A"
+                                        value={newItemLocation}
+                                        onChange={(e) => setNewItemLocation(e.target.value)}
+                                        required
+                                        disabled={isSubmitting}
+                                    />
+                                </div>
                             </div>
                             <div className="form-group">
                                 <label>Quantity</label>
-                                <div className="input-wrapper"><input type="number" placeholder="e.g. 500" required /></div>
+                                <div className="input-wrapper">
+                                    <input
+                                        type="number"
+                                        placeholder="e.g. 500"
+                                        value={newItemQuantity}
+                                        onChange={(e) => setNewItemQuantity(e.target.value)}
+                                        required
+                                        disabled={isSubmitting}
+                                    />
+                                </div>
                             </div>
                             <div className="modal-actions">
-                                <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)}>Cancel</button>
-                                <button type="submit" className="btn btn-primary">Add Asset</button>
+                                <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)} disabled={isSubmitting}>Cancel</button>
+                                <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
+                                    {isSubmitting ? 'Adding...' : 'Add Asset'}
+                                </button>
                             </div>
                         </form>
                     </div>

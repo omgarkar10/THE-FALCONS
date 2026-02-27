@@ -25,14 +25,10 @@ def create_app() -> Flask:
     # Basic config
     app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "dev-secret-key")
 
-    # Allow frontend dev server
+    # Allow frontend dev server from any device on local net
     CORS(
         app,
-        resources={r"/api/*": {"origins": [
-            "http://localhost:5173", "http://127.0.0.1:5173",
-            "http://localhost:5174", "http://127.0.0.1:5174",
-            "http://localhost:5175", "http://127.0.0.1:5175"
-        ]}},
+        resources={r"/api/*": {"origins": "*"}},
         supports_credentials=True,
     )
 

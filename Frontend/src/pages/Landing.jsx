@@ -33,7 +33,7 @@ const features = [
         id: 'iot',
         icon: Wifi,
         title: 'IoT Sensor Network',
-        desc: 'Manage hundreds of connected sensors across your facility. Automated calibration and health monitoring.',
+        deso: 'Manage hundreds of connected sensors across your facility. Automated calibration and health monitoring.',
         preview: null,
     },
     {
@@ -129,10 +129,7 @@ const Landing = () => {
                                 <button className="btn btn-secondary btn-lg"><Play size={18} /> See How It Works</button>
                             </div>
                             <div className="hero-trust">
-                                <CheckCircle2 size={16} /> Free 14-day trial
-                                <CheckCircle2 size={16} /> No credit card
-                                <CheckCircle2 size={16} /> Cancel anytime
-                                <CheckCircle2 size={16} /> 24/7 support
+                              
                             </div>
                         </div>
                         <div className="hero-preview">
