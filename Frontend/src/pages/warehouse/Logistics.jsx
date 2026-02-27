@@ -1,6 +1,7 @@
 import { Truck, ArrowDownLeft, ArrowUpRight, MapPin, Clock, Package, Calendar } from 'lucide-react';
 import StatCard from '../../components/common/StatCard';
 import DataTable from '../../components/common/DataTable';
+import TruckMap from '../../components/common/TruckMap';
 import { mockLogistics } from '../../data/mockData';
 import './Dashboard.css';
 import './Logistics.css';
@@ -108,7 +109,7 @@ const Logistics = () => {
                 </div>
             </div>
 
-            {/* Truck Tracking Placeholder */}
+            {/* Truck Tracking */}
             <div className="card truck-tracking-card">
                 <div className="chart-header">
                     <div>
@@ -116,11 +117,7 @@ const Logistics = () => {
                         <p>Live vehicle locations</p>
                     </div>
                 </div>
-                <div className="map-placeholder">
-                    <MapPin size={48} />
-                    <p>Map integration placeholder</p>
-                    <span>Connect Google Maps or Mapbox for live tracking</span>
-                </div>
+                <TruckMap trucks={[...incomingShipments, ...outgoingShipments]} />
             </div>
 
             {/* Dispatch Schedule */}
