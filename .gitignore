@@ -1,0 +1,27 @@
+node_modules/
+.env
+.DS_Store
+
+# Frontend
+Frontend/node_modules/
+Frontend/dist/
+Frontend/.env
+Frontend/.env.*
+
+# Backend
+Backend/node_modules/
+Backend/venv/
+Backend/__pycache__/
+Backend/.env
+
+# vite-project
+vite-project/node_modules/
+vite-project/dist/
+
+# Virtual Environments
+venv/
+**/venv/
+venv/lib/
+venv/Scripts/
+venv/Include/
+*.pyc
