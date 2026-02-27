@@ -1,0 +1,201 @@
+/* Auth Pages */
+.auth-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #f0fdf4 0%, #f8fafc 50%, #f0f9ff 100%);
+    padding: var(--space-lg);
+}
+
+.auth-card {
+    background: white;
+    border-radius: var(--radius-xl);
+    padding: var(--space-2xl);
+    width: 100%;
+    max-width: 460px;
+    box-shadow: var(--shadow-xl);
+    border: 1px solid var(--color-border-light);
+    animation: scaleIn 0.4s ease;
+}
+
+.auth-header {
+    text-align: center;
+    margin-bottom: var(--space-xl);
+}
+
+.auth-logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 800;
+    font-size: var(--font-size-xl);
+    color: var(--color-text-primary);
+    margin-bottom: var(--space-lg);
+}
+
+.auth-header h1 {
+    font-size: var(--font-size-2xl);
+    font-weight: 800;
+    margin-bottom: 4px;
+}
+
+.auth-header p {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+}
+
+.auth-error {
+    padding: var(--space-md);
+    background: #fee2e2;
+    color: #dc2626;
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-sm);
+    margin-bottom: var(--space-md);
+    text-align: center;
+}
+
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-group label {
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    color: var(--color-text-primary);
+}
+
+.input-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px var(--space-md);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    transition: all var(--transition-fast);
+    background: white;
+}
+
+.input-wrapper:focus-within {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(21, 94, 43, 0.1);
+}
+
+.input-wrapper svg {
+    color: var(--color-text-tertiary);
+    flex-shrink: 0;
+}
+
+.input-wrapper input {
+    flex: 1;
+    color: var(--color-text-primary);
+    background: transparent;
+}
+
+.input-wrapper input::placeholder {
+    color: var(--color-text-tertiary);
+}
+
+.input-toggle {
+    color: var(--color-text-tertiary);
+    padding: 2px;
+}
+
+.input-toggle:hover {
+    color: var(--color-text-primary);
+}
+
+/* Role Selector */
+.role-selector {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-sm);
+}
+
+.role-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: var(--space-md);
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    text-align: left;
+    transition: all var(--transition-fast);
+    background: white;
+}
+
+.role-option:hover {
+    border-color: var(--color-primary-200);
+}
+
+.role-option.active {
+    border-color: var(--color-primary);
+    background: var(--color-primary-50);
+}
+
+.role-emoji {
+    font-size: 1.5rem;
+}
+
+.role-title {
+    font-weight: 700;
+    font-size: var(--font-size-sm);
+}
+
+.role-desc {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-tertiary);
+}
+
+.auth-divider {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    margin: var(--space-lg) 0;
+    color: var(--color-text-tertiary);
+    font-size: var(--font-size-xs);
+}
+
+.auth-divider::before,
+.auth-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--color-border);
+}
+
+.demo-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-sm);
+}
+
+.demo-buttons .btn {
+    justify-content: center;
+    font-size: var(--font-size-sm);
+    padding: 10px;
+}
+
+.auth-footer {
+    text-align: center;
+    margin-top: var(--space-lg);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+}
+
+.auth-footer a {
+    color: var(--color-primary);
+    font-weight: 600;
+}
+
+.auth-footer a:hover {
+    text-decoration: underline;
+}

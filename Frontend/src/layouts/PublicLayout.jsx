@@ -1,0 +1,17 @@
+import { Outlet } from 'react-router-dom';
+import Navbar from '../components/common/Navbar';
+import Footer from '../components/common/Footer';
+
+const PublicLayout = () => {
+    return (
+        <>
+            <Navbar />
+            <main style={{ paddingTop: 'var(--header-height)' }}>
+                <Outlet />
+            </main>
+            <Footer />
+        </>
+    );
+};
+
+export default PublicLayout;
