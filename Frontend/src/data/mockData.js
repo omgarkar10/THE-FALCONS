@@ -135,3 +135,88 @@ export const mockConsumerData = {
         { name: 'Apples', value: 80, fill: '#f06418' },
     ],
 };
+
+// Logistics mock data
+export const mockLogistics = {
+    incomingShipments: [
+        { _id: 'SH-IN-001', status: 'In Transit', origin: 'Farm District A', crop: 'Wheat', variety: 'HD-2967', quantity: 450, unit: 'tons', eta: '2026-02-27T17:00:00Z', truckId: 'TRK-1045' },
+        { _id: 'SH-IN-002', status: 'Loading', origin: 'River Valley Farms', crop: 'Rice', variety: 'Basmati', quantity: 280, unit: 'tons', eta: '2026-02-28T09:00:00Z', truckId: 'TRK-1052' },
+        { _id: 'SH-IN-003', status: 'Scheduled', origin: 'Green Plains Farm', crop: 'Corn', variety: 'Yellow', quantity: 620, unit: 'tons', eta: '2026-03-01T09:00:00Z', truckId: 'TRK-1038' },
+    ],
+    outgoingShipments: [
+        { _id: 'SH-OUT-001', status: 'Dispatched', destination: 'City Mill Co.', crop: 'Wheat', variety: 'Organic', quantity: 300, unit: 'tons', departure: '2026-02-27T10:00:00Z', truckId: 'TRK-1029' },
+        { _id: 'SH-OUT-002', status: 'Loading', destination: 'Metro Distributors', crop: 'Rice', variety: 'Basmati', quantity: 180, unit: 'tons', departure: '2026-02-27T15:00:00Z', truckId: 'TRK-1034' },
+        { _id: 'SH-OUT-003', status: 'Pending', destination: 'Regional Distributor', crop: 'Soybean', variety: 'Standard', quantity: 150, unit: 'tons', departure: '2026-03-01T08:00:00Z', truckId: 'TRK-1041' },
+    ],
+    dispatchSchedule: [
+        { _id: 'SH-OUT-004', destination: 'Harbor Port C', crop: 'Rice', quantity: 500, unit: 'tons', date: '2026-02-28', time: '06:00 AM', priority: 'High' },
+        { _id: 'SH-OUT-005', destination: 'Processing Plant D', crop: 'Corn', quantity: 320, unit: 'tons', date: '2026-02-28', time: '10:00 AM', priority: 'Medium' },
+        { _id: 'SH-OUT-006', destination: 'Retail Warehouse E', crop: 'Wheat', quantity: 200, unit: 'tons', date: '2026-03-01', time: '07:00 AM', priority: 'Low' },
+        { _id: 'SH-OUT-007', destination: 'Export Terminal A', crop: 'Barley', quantity: 400, unit: 'tons', date: '2026-03-01', time: '02:00 PM', priority: 'High' },
+    ],
+    stats: {
+        totalInbound: 3,
+        totalOutbound: 3,
+        inTransit: 4,
+        trucksActive: 6,
+    },
+};
+
+// Warehouse capacity and contact data for consumer view
+export const mockWarehouseDirectory = [
+    {
+        _id: '1',
+        name: 'AgroVault Central Hub',
+        location: 'Sector 15, Gurgaon, Haryana',
+        totalCapacity: 15000,
+        usedCapacity: 11160,
+        units: 8,
+        contact: { phone: '+91 124-456-7890', email: 'central@agrovault.io', manager: 'Rajesh Kumar' },
+        crops: ['Wheat', 'Rice', 'Corn', 'Soybean'],
+        status: 'operational',
+    },
+    {
+        _id: '2',
+        name: 'AgroVault Cold Storage',
+        location: 'APMC Yard, Nashik, Maharashtra',
+        totalCapacity: 5000,
+        usedCapacity: 3200,
+        units: 4,
+        contact: { phone: '+91 253-234-5678', email: 'nashik@agrovault.io', manager: 'Priya Sharma' },
+        crops: ['Apples', 'Grapes', 'Potatoes', 'Tomatoes'],
+        status: 'operational',
+    },
+    {
+        _id: '3',
+        name: 'AgroVault Grain Terminal',
+        location: 'Kandla Port, Kutch, Gujarat',
+        totalCapacity: 25000,
+        usedCapacity: 18500,
+        units: 12,
+        contact: { phone: '+91 2836-223-456', email: 'kandla@agrovault.io', manager: 'Amit Patel' },
+        crops: ['Wheat', 'Rice', 'Barley', 'Cotton'],
+        status: 'operational',
+    },
+    {
+        _id: '4',
+        name: 'AgroVault South Region',
+        location: 'Industrial Area, Kochi, Kerala',
+        totalCapacity: 8000,
+        usedCapacity: 4800,
+        units: 6,
+        contact: { phone: '+91 484-567-8901', email: 'kochi@agrovault.io', manager: 'Sunita Nair' },
+        crops: ['Spices', 'Coconut', 'Rice', 'Rubber'],
+        status: 'maintenance',
+    },
+    {
+        _id: '5',
+        name: 'AgroVault Punjab Hub',
+        location: 'Grain Market, Ludhiana, Punjab',
+        totalCapacity: 20000,
+        usedCapacity: 16000,
+        units: 10,
+        contact: { phone: '+91 161-345-6789', email: 'ludhiana@agrovault.io', manager: 'Harpreet Singh' },
+        crops: ['Wheat', 'Rice', 'Corn', 'Mustard'],
+        status: 'operational',
+    },
+];

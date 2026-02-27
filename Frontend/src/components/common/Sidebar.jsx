@@ -3,7 +3,7 @@ import { useAuth } from '../../context/AuthContext';
 import {
     LayoutDashboard, Package, Database, BarChart3, Bell,
     Settings, LogOut, Wheat, ChevronLeft, ChevronRight,
-    Truck, FileCheck, Users, Thermometer, Wifi
+    Truck, FileCheck, Users, Thermometer, Wifi, Building2
 } from 'lucide-react';
 import { useState } from 'react';
 import './Sidebar.css';
@@ -12,6 +12,7 @@ const warehouseMenu = [
     { path: '/warehouse/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
     { path: '/warehouse/inventory', icon: Package, label: 'Inventory' },
     { path: '/warehouse/storage', icon: Database, label: 'Storage' },
+    { path: '/warehouse/logistics', icon: Truck, label: 'Logistics' },
     { path: '/warehouse/analytics', icon: BarChart3, label: 'Analytics' },
     { path: '/warehouse/alerts', icon: Bell, label: 'Alerts' },
     { path: '/warehouse/settings', icon: Settings, label: 'Settings' },
@@ -22,6 +23,7 @@ const consumerMenu = [
     { path: '/consumer/inventory', icon: Package, label: 'My Stock' },
     { path: '/consumer/shipments', icon: Truck, label: 'Shipments' },
     { path: '/consumer/quality', icon: FileCheck, label: 'Quality' },
+    { path: '/consumer/warehouses', icon: Building2, label: 'Warehouses' },
     { path: '/consumer/alerts', icon: Bell, label: 'Alerts' },
 ];
 

@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
     Wheat, BarChart3, Package, Database, Wifi, Truck, FileCheck,
-    ArrowRight, Play, CheckCircle2, Shield, Clock, Headphones,
-    ChevronDown, Star, Zap, Target, TrendingUp, Thermometer
+    ArrowRight, Play, CheckCircle2, Shield, Clock,
+    ChevronDown, Zap, Target, TrendingUp, Thermometer
 } from 'lucide-react';
 import './Landing.css';
 
@@ -316,66 +316,6 @@ const Landing = () => {
                             <div key={s.label} className="impact-item">
                                 <div className="impact-value">{s.value}</div>
                                 <div className="impact-label">{s.label}</div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </section>
-
-            {/* Pricing */}
-            <section className="section" id="pricing">
-                <div className="container">
-                    <div className="section-header">
-                        <span className="section-badge">Pricing</span>
-                        <h2>Simple, transparent pricing</h2>
-                        <p>Choose the plan that fits your operation. Scale up anytime.</p>
-                    </div>
-                    <div className="grid grid-3 pricing-grid">
-                        {pricing.map((plan) => (
-                            <div key={plan.name} className={`card pricing-card ${plan.popular ? 'popular' : ''}`}>
-                                {plan.popular && <div className="popular-badge">Most Popular</div>}
-                                <h3>{plan.name}</h3>
-                                <p className="pricing-desc">{plan.desc}</p>
-                                <div className="pricing-price">
-                                    {plan.price !== 'Custom' && <span className="price-symbol">$</span>}
-                                    <span className="price-value">{plan.price}</span>
-                                    {plan.price !== 'Custom' && <span className="price-period">/month</span>}
-                                </div>
-                                <ul className="pricing-features">
-                                    {plan.features.map((f) => (
-                                        <li key={f}><CheckCircle2 size={16} /> {f}</li>
-                                    ))}
-                                </ul>
-                                <Link to="/signup" className={`btn ${plan.popular ? 'btn-primary' : 'btn-outline'} btn-lg`} style={{ width: '100%', justifyContent: 'center' }}>
-                                    Get Started
-                                </Link>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </section>
-
-            {/* Testimonials */}
-            <section className="section" id="testimonials" style={{ background: 'var(--color-bg-secondary)' }}>
-                <div className="container">
-                    <div className="section-header">
-                        <span className="section-badge">Testimonials</span>
-                        <h2>Trusted by industry leaders</h2>
-                    </div>
-                    <div className="grid grid-3">
-                        {testimonials.map((t) => (
-                            <div key={t.name} className="card testimonial-card">
-                                <div className="testimonial-stars">
-                                    {[...Array(t.rating)].map((_, i) => <Star key={i} size={16} fill="#f59e0b" color="#f59e0b" />)}
-                                </div>
-                                <p className="testimonial-text">"{t.text}"</p>
-                                <div className="testimonial-author">
-                                    <div className="testimonial-avatar">{t.name.charAt(0)}</div>
-                                    <div>
-                                        <div className="testimonial-name">{t.name}</div>
-                                        <div className="testimonial-role">{t.role}</div>
-                                    </div>
-                                </div>
                             </div>
                         ))}
                     </div>
