@@ -1,10 +1,11 @@
 import os
-from datetime import datetime, timedelta
+from datetime import datetime
 from uuid import uuid4
 
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from dotenv import load_dotenv
+from werkzeug.security import generate_password_hash, check_password_hash
 
 try:
     from google import genai
@@ -13,17 +14,7 @@ except ImportError:
     genai = None
     HttpOptions = None
 
-from mock_data import (
-    MOCK_INVENTORY,
-    MOCK_SENSOR_READINGS,
-    MOCK_ALERTS,
-    MOCK_SILO_STATUS,
-    MOCK_DASHBOARD_STATS,
-    MOCK_ANALYTICS,
-    MOCK_CONSUMER_DATA,
-    MOCK_LOGISTICS,
-    MOCK_WAREHOUSE_DIRECTORY,
-)
+from db import get_db
 
 load_dotenv()
 
@@ -45,33 +36,14 @@ def create_app() -> Flask:
         supports_credentials=True,
     )
 
-    # In-memory "database" for demo purposes
-    users = {
-        "admin@agrovault.io": {
-            "_id": "demo-admin",
-            "name": "Admin Manager",
-            "email": "admin@agrovault.io",
-            "password": "admin123",
-            "role": "warehouse",
-        },
-        "niket@farm.io": {
-            "_id": "demo-consumer",
-            "name": "Niket Farmer",
-            "email": "niket@farm.io",
-            "password": "farmer123",
-            "role": "consumer",
-        },
-    }
-
-    # In-memory inventory store seeded from mock data
-    inventory = {item["_id"]: dict(item) for item in MOCK_INVENTORY}
-
     # --------------------
     # Helper functions
     # --------------------
 
+    def db():
+        return get_db()
+
     def make_token(user_id: str) -> str:
-        # For now this is just a dummy opaque token. Frontend only checks presence.
         return f"token-{user_id}-{uuid4()}"
 
     def current_time_iso() -> str:
@@ -92,7 +64,7 @@ def create_app() -> Flask:
         if not all([name, email, password]):
             return jsonify({"message": "Name, email and password are required"}), 400
 
-        if email in users:
+        if db().users.find_one({"email": email}):
             return jsonify({"message": "User already exists"}), 400
 
         user_id = str(uuid4())
@@ -100,10 +72,10 @@ def create_app() -> Flask:
             "_id": user_id,
             "name": name,
             "email": email,
-            "password": password,
+            "password": generate_password_hash(password),
             "role": role,
         }
-        users[email] = user
+        db().users.insert_one(user)
 
         token = make_token(user_id)
         response_user = {k: v for k, v in user.items() if k != "password"}
@@ -118,24 +90,27 @@ def create_app() -> Flask:
         if not email:
             return jsonify({"message": "Email is required"}), 400
 
-        user = users.get(email)
+        user = db().users.find_one({"email": email})
 
-        # If user doesn't exist yet, auto-create it so any random
-        # email/password can log in for demo purposes.
         if not user:
+            # Auto-create for demo purposes (any email/password can log in)
             user_id = str(uuid4())
             user = {
                 "_id": user_id,
                 "name": (email.split("@")[0] or "User").title(),
                 "email": email,
-                "password": password,
+                "password": generate_password_hash(password),
                 "role": "consumer",
             }
-            users[email] = user
+            db().users.insert_one(user)
         else:
-            # For demo we keep things simple and just update the password,
-            # so any password works once you know the email.
-            user["password"] = password
+            # For demo: accept any password — just verify if it matches the hash,
+            # and if not, update the stored hash so the next login works too.
+            if not check_password_hash(user["password"], password):
+                db().users.update_one(
+                    {"_id": user["_id"]},
+                    {"$set": {"password": generate_password_hash(password)}},
+                )
 
         token = make_token(user["_id"])
         response_user = {k: v for k, v in user.items() if k != "password"}
@@ -148,9 +123,8 @@ def create_app() -> Flask:
     @app.get("/api/inventory")
     def get_inventory():
         category = request.args.get("category")
-        items = list(inventory.values())
-        if category:
-            items = [item for item in items if item.get("category") == category]
+        query = {"category": category} if category else {}
+        items = list(db().inventory.find(query))
         return jsonify(items), 200
 
     @app.post("/api/inventory")
@@ -169,22 +143,20 @@ def create_app() -> Flask:
             "temperature": data.get("temperature", 22.0),
             "humidity": data.get("humidity", 60),
         }
-        inventory[item_id] = new_item
+        db().inventory.insert_one(new_item)
         return jsonify(new_item), 201
 
     @app.get("/api/inventory/<item_id>")
     def get_inventory_item(item_id: str):
-        item = inventory.get(item_id)
+        item = db().inventory.find_one({"_id": item_id})
         if not item:
             return jsonify({"message": "Item not found"}), 404
         return jsonify(item), 200
 
     @app.put("/api/inventory/<item_id>")
     def update_inventory_item(item_id: str):
-        if item_id not in inventory:
-            return jsonify({"message": "Item not found"}), 404
         data = request.get_json(force=True)
-        item = inventory[item_id]
+        update_fields = {}
         for key in [
             "name",
             "category",
@@ -196,16 +168,23 @@ def create_app() -> Flask:
             "humidity",
         ]:
             if key in data:
-                item[key] = data[key]
-        item["lastChecked"] = current_time_iso()
-        inventory[item_id] = item
-        return jsonify(item), 200
+                update_fields[key] = data[key]
+        update_fields["lastChecked"] = current_time_iso()
+
+        result = db().inventory.find_one_and_update(
+            {"_id": item_id},
+            {"$set": update_fields},
+            return_document=True,
+        )
+        if not result:
+            return jsonify({"message": "Item not found"}), 404
+        return jsonify(result), 200
 
     @app.delete("/api/inventory/<item_id>")
     def delete_inventory_item(item_id: str):
-        if item_id not in inventory:
+        deleted = db().inventory.find_one_and_delete({"_id": item_id})
+        if not deleted:
             return jsonify({"message": "Item not found"}), 404
-        deleted = inventory.pop(item_id)
         return jsonify({"deleted": deleted}), 200
 
     # --------------------
@@ -214,19 +193,37 @@ def create_app() -> Flask:
 
     @app.get("/api/analytics/dashboard")
     def analytics_dashboard():
-        return jsonify(MOCK_DASHBOARD_STATS), 200
+        doc = db().dashboard_stats.find_one({"_id": "current"}, {"_id": 0})
+        return jsonify(doc or {}), 200
 
     @app.get("/api/analytics/trends")
     def analytics_trends():
-        return jsonify(MOCK_ANALYTICS.get("storageTrends", [])), 200
+        doc = db().analytics.find_one({"_id": "current"}, {"_id": 0})
+        return jsonify((doc or {}).get("storageTrends", [])), 200
 
     @app.get("/api/analytics/loss")
     def analytics_loss():
-        return jsonify(MOCK_ANALYTICS.get("lossAnalysis", [])), 200
+        doc = db().analytics.find_one({"_id": "current"}, {"_id": 0})
+        return jsonify((doc or {}).get("lossAnalysis", [])), 200
 
     @app.get("/api/analytics/consumer")
     def analytics_consumer():
-        return jsonify(MOCK_CONSUMER_DATA.get("stats", {})), 200
+        doc = db().consumer_data.find_one({"_id": "current"}, {"_id": 0})
+        return jsonify((doc or {}).get("stats", {})), 200
+
+    @app.get("/api/analytics/full")
+    def analytics_full():
+        doc = db().analytics.find_one({"_id": "current"}, {"_id": 0})
+        return jsonify(doc or {}), 200
+
+    # --------------------
+    # Consumer data route
+    # --------------------
+
+    @app.get("/api/consumer")
+    def consumer_data():
+        doc = db().consumer_data.find_one({"_id": "current"}, {"_id": 0})
+        return jsonify(doc or {}), 200
 
     # --------------------
     # Sensor routes
@@ -234,44 +231,44 @@ def create_app() -> Flask:
 
     @app.get("/api/sensors/readings")
     def sensor_readings():
-        return jsonify(MOCK_SENSOR_READINGS), 200
+        doc = db().sensor_readings.find_one({"_id": "current"}, {"_id": 0})
+        return jsonify(doc or {}), 200
 
     @app.get("/api/sensors/alerts")
     def sensor_alerts():
         severity = request.args.get("severity")
-        alerts = list(MOCK_ALERTS)
-        if severity:
-            alerts = [a for a in alerts if a.get("severity") == severity]
+        query = {"severity": severity} if severity else {}
+        alerts = list(db().alerts.find(query))
         return jsonify(alerts), 200
 
     @app.get("/api/sensors/silos")
     def sensor_silos():
-        return jsonify(MOCK_SILO_STATUS), 200
+        silos = list(db().silo_status.find({}, {"_id": 0}))
+        return jsonify(silos), 200
 
     @app.put("/api/sensors/alerts/<alert_id>/acknowledge")
     def acknowledge_alert(alert_id: str):
-        found = False
-        for alert in MOCK_ALERTS:
-            if alert["_id"] == alert_id:
-                alert["acknowledged"] = True
-                alert["acknowledgedAt"] = current_time_iso()
-                found = True
-                break
-        if not found:
+        result = db().alerts.update_one(
+            {"_id": alert_id},
+            {"$set": {"acknowledged": True, "acknowledgedAt": current_time_iso()}},
+        )
+        if result.matched_count == 0:
             return jsonify({"message": "Alert not found"}), 404
         return jsonify({"message": "Alert acknowledged"}), 200
 
     # --------------------
-    # Logistics & directory (optional extras)
+    # Logistics & directory
     # --------------------
 
     @app.get("/api/logistics")
     def logistics():
-        return jsonify(MOCK_LOGISTICS), 200
+        doc = db().logistics.find_one({"_id": "current"}, {"_id": 0})
+        return jsonify(doc or {}), 200
 
     @app.get("/api/warehouses")
     def warehouses():
-        return jsonify(MOCK_WAREHOUSE_DIRECTORY), 200
+        items = list(db().warehouses.find({}))
+        return jsonify(items), 200
 
     # --------------------
     # Gemini chat route
@@ -352,7 +349,12 @@ Keep responses concise and helpful. Use bullet points when listing multiple item
 
     @app.get("/api/health")
     def health():
-        return jsonify({"status": "ok", "time": current_time_iso()}), 200
+        try:
+            db().command("ping")
+            db_status = "connected"
+        except Exception:
+            db_status = "disconnected"
+        return jsonify({"status": "ok", "time": current_time_iso(), "database": db_status}), 200
 
     return app
 
@@ -361,4 +363,3 @@ if __name__ == "__main__":
     flask_app = create_app()
     port = int(os.environ.get("PORT", "5000"))
     flask_app.run(host="0.0.0.0", port=port, debug=True)
-
