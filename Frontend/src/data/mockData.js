@@ -139,13 +139,13 @@ export const mockConsumerData = {
 // Logistics mock data
 export const mockLogistics = {
     incomingShipments: [
-        { _id: 'SH-IN-001', status: 'In Transit', origin: 'Farm District A', crop: 'Wheat', variety: 'HD-2967', quantity: 450, unit: 'tons', eta: '2026-02-27T17:00:00Z', truckId: 'TRK-1045' },
-        { _id: 'SH-IN-002', status: 'Loading', origin: 'River Valley Farms', crop: 'Rice', variety: 'Basmati', quantity: 280, unit: 'tons', eta: '2026-02-28T09:00:00Z', truckId: 'TRK-1052' },
+        { _id: 'SH-IN-001', status: 'In Transit', origin: 'Farm District A', crop: 'Wheat', variety: 'HD-2967', quantity: 450, unit: 'tons', eta: '2026-02-27T17:00:00Z', truckId: 'TRK-1045', location: { lat: 28.7041, lng: 77.1025 } },
+        { _id: 'SH-IN-002', status: 'Loading', origin: 'River Valley Farms', crop: 'Rice', variety: 'Basmati', quantity: 280, unit: 'tons', eta: '2026-02-28T09:00:00Z', truckId: 'TRK-1052', location: { lat: 28.5355, lng: 77.3910 } },
         { _id: 'SH-IN-003', status: 'Scheduled', origin: 'Green Plains Farm', crop: 'Corn', variety: 'Yellow', quantity: 620, unit: 'tons', eta: '2026-03-01T09:00:00Z', truckId: 'TRK-1038' },
     ],
     outgoingShipments: [
-        { _id: 'SH-OUT-001', status: 'Dispatched', destination: 'City Mill Co.', crop: 'Wheat', variety: 'Organic', quantity: 300, unit: 'tons', departure: '2026-02-27T10:00:00Z', truckId: 'TRK-1029' },
-        { _id: 'SH-OUT-002', status: 'Loading', destination: 'Metro Distributors', crop: 'Rice', variety: 'Basmati', quantity: 180, unit: 'tons', departure: '2026-02-27T15:00:00Z', truckId: 'TRK-1034' },
+        { _id: 'SH-OUT-001', status: 'Dispatched', destination: 'City Mill Co.', crop: 'Wheat', variety: 'Organic', quantity: 300, unit: 'tons', departure: '2026-02-27T10:00:00Z', truckId: 'TRK-1029', location: { lat: 28.4595, lng: 77.0266 } },
+        { _id: 'SH-OUT-002', status: 'Loading', destination: 'Metro Distributors', crop: 'Rice', variety: 'Basmati', quantity: 180, unit: 'tons', departure: '2026-02-27T15:00:00Z', truckId: 'TRK-1034', location: { lat: 28.6139, lng: 77.2090 } },
         { _id: 'SH-OUT-003', status: 'Pending', destination: 'Regional Distributor', crop: 'Soybean', variety: 'Standard', quantity: 150, unit: 'tons', departure: '2026-03-01T08:00:00Z', truckId: 'TRK-1041' },
     ],
     dispatchSchedule: [
