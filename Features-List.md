@@ -200,3 +200,8 @@
 ### 11.3 Database Optimization
 - Indexed batch records
 - Fast search and filtering
+
+### 12. Languages
+- English
+- Hindi
+- Marathi
