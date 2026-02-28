@@ -1,0 +1,127 @@
+/* Analytics Page Specific Styles */
+
+.custom-tooltip {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(8px);
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 12px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.tooltip-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #64748b;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.tooltip-items {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.tooltip-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.tooltip-item .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.tooltip-item .name {
+    color: #64748b;
+    font-weight: 500;
+}
+
+.chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: var(--space-lg);
+}
+
+.chart-stat-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #f0fdf4;
+    color: #155e2b;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    border: 1px solid #dcfce7;
+}
+
+.chart-stat-badge.secondary {
+    background: #eff6ff;
+    color: #1d4ed8;
+    border-color: #dbeafe;
+}
+
+/* View Toggle Styles */
+.view-toggle-group {
+    display: flex;
+    background: #f1f5f9;
+    padding: 4px;
+    border-radius: 8px;
+    margin-right: 12px;
+}
+
+.view-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: transparent;
+    color: #64748b;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.view-btn:hover {
+    color: #1e293b;
+    background: #e2e8f0;
+}
+
+.view-btn.active {
+    background: white !important;
+    color: #155e2b !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.flex-center {
+    display: flex;
+    align-items: center;
+}
+
+.gap-10 {
+    gap: 10px;
+}
+
+.recharts-cartesian-grid-horizontal line {
+    stroke-dasharray: 4 4;
+}
+
+.recharts-legend-item {
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.recharts-legend-item:hover {
+    opacity: 0.7;
+}

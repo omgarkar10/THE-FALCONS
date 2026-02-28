@@ -55,13 +55,26 @@ export const mockSiloStatus = [
 export const mockDashboardStats = {
     totalStock: 11160,
     capacityUsed: 72,
-    activeSensors: 248,
+    activeSensors: 10,
     criticalAlerts: 3,
     stockTrend: '+5.2%',
     capacityTrend: '+2.1%',
     sensorTrend: '-1',
     alertTrend: '+2',
 };
+
+export const mockIoTSensors = [
+    { id: 'IOT-001', name: 'Temp Sensor A1-01', location: 'Silo A1', type: 'Temperature', battery: 92, signal: 98, lastPing: '30s ago', status: 'online', pingInterval: 60, thresholds: { min: 15, max: 28 }, firmware: 'v1.2.4' },
+    { id: 'IOT-002', name: 'Humidity Sensor A1-02', location: 'Silo A1', type: 'Humidity', battery: 85, signal: 95, lastPing: '45s ago', status: 'online', pingInterval: 120, thresholds: { min: 40, max: 70 }, firmware: 'v1.2.4' },
+    { id: 'IOT-003', name: 'CO2 Sensor A2-01', location: 'Silo A2', type: 'Gas', battery: 78, signal: 88, lastPing: '1m ago', status: 'online', pingInterval: 180, thresholds: { min: 300, max: 600 }, firmware: 'v1.1.8' },
+    { id: 'IOT-004', name: 'Moisture Sensor B1-01', location: 'Silo B1', type: 'Moisture', battery: 45, signal: 72, lastPing: '2m ago', status: 'online', pingInterval: 300, thresholds: { min: 10, max: 30 }, firmware: 'v2.0.1' },
+    { id: 'IOT-005', name: 'Temp Sensor B2-01', location: 'Silo B2', type: 'Temperature', battery: 22, signal: 55, lastPing: '5m ago', status: 'warning', pingInterval: 60, thresholds: { min: 15, max: 28 }, firmware: 'v1.2.4' },
+    { id: 'IOT-006', name: 'Multi Sensor B3-01', location: 'Silo B3', type: 'Multi', battery: 67, signal: 82, lastPing: '1m ago', status: 'online', pingInterval: 60, thresholds: { min: 0, max: 100 }, firmware: 'v2.1.0' },
+    { id: 'IOT-007', name: 'Temp Sensor C1-01', location: 'Unit C1', type: 'Temperature', battery: 0, signal: 0, lastPing: '2h ago', status: 'offline', pingInterval: 60, thresholds: { min: 15, max: 28 }, firmware: 'v1.2.2' },
+    { id: 'IOT-008', name: 'Humidity Sensor C2-01', location: 'Unit C2', type: 'Humidity', battery: 88, signal: 91, lastPing: '3m ago', status: 'online', pingInterval: 120, thresholds: { min: 40, max: 70 }, firmware: 'v1.2.4' },
+    { id: 'IOT-009', name: 'CO2 Sensor D1-01', location: 'Warehouse D1', type: 'Gas', battery: 75, signal: 86, lastPing: '1m ago', status: 'online', pingInterval: 180, thresholds: { min: 300, max: 600 }, firmware: 'v1.1.8' },
+    { id: 'IOT-010', name: 'Vibration Sensor E1-01', location: 'Conveyor E1', type: 'Vibration', battery: 52, signal: 68, lastPing: '10m ago', status: 'warning', pingInterval: 10, thresholds: { min: 0, max: 5 }, firmware: 'v3.0.1' },
+];
 
 export const mockGrainDistribution = [
     { name: 'Wheat', value: 2450, fill: '#155e2b' },
