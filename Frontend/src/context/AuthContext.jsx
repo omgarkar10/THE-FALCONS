@@ -39,7 +39,11 @@ export const AuthProvider = ({ children }) => {
             setUser(data.user);
             return { success: true, user: data.user };
         } catch (error) {
-            return { success: false, error: error.response?.data?.message || 'Signup failed' };
+            const msg =
+                error.response?.data?.message ||
+                error.message ||
+                'Signup failed. Please try again.';
+            return { success: false, error: msg };
         }
     };
 

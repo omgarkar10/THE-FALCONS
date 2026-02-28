@@ -1,6 +1,8 @@
 import os
-from datetime import datetime
+import jwt
+from datetime import datetime, timedelta
 from uuid import uuid4
+from functools import wraps
 
 from flask import Flask, jsonify, request
 from flask_cors import CORS
@@ -18,14 +20,16 @@ from db import get_db
 
 load_dotenv()
 
+JWT_EXPIRY_HOURS = 24
+
 
 def create_app() -> Flask:
     app = Flask(__name__)
 
-    # Basic config
-    app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "dev-secret-key")
+    SECRET_KEY = os.environ.get("SECRET_KEY", "agrovault-super-secret-key-change-in-prod")
+    app.config["SECRET_KEY"] = SECRET_KEY
 
-    # Allow frontend dev server from any device on local net
+    # Allow frontend from any origin
     CORS(
         app,
         resources={r"/api/*": {"origins": "*"}},
@@ -39,8 +43,39 @@ def create_app() -> Flask:
     def db():
         return get_db()
 
-    def make_token(user_id: str) -> str:
-        return f"token-{user_id}-{uuid4()}"
+    def make_jwt(user_id: str, role: str) -> str:
+        """Generate a real signed JWT token."""
+        payload = {
+            "sub": user_id,
+            "role": role,
+            "iat": datetime.utcnow(),
+            "exp": datetime.utcnow() + timedelta(hours=JWT_EXPIRY_HOURS),
+        }
+        return jwt.encode(payload, SECRET_KEY, algorithm="HS256")
+
+    def decode_jwt(token: str) -> dict:
+        """Decode and verify a JWT token. Raises on failure."""
+        return jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+
+    def token_required(f):
+        """Decorator to protect routes — requires a valid JWT Bearer token."""
+        @wraps(f)
+        def decorated(*args, **kwargs):
+            auth_header = request.headers.get("Authorization", "")
+            if not auth_header.startswith("Bearer "):
+                return jsonify({"message": "Authorization token missing or malformed"}), 401
+            token = auth_header.split(" ", 1)[1]
+            try:
+                payload = decode_jwt(token)
+            except jwt.ExpiredSignatureError:
+                return jsonify({"message": "Token has expired. Please log in again."}), 401
+            except jwt.InvalidTokenError:
+                return jsonify({"message": "Invalid token. Please log in again."}), 401
+            # Attach user info to request context
+            request.current_user_id = payload["sub"]
+            request.current_user_role = payload.get("role", "consumer")
+            return f(*args, **kwargs)
+        return decorated
 
     def current_time_iso() -> str:
         return datetime.utcnow().isoformat() + "Z"
@@ -56,12 +91,14 @@ def create_app() -> Flask:
         email = data.get("email")
         password = data.get("password")
         role = data.get("role", "consumer")
+        phone = data.get("phone", "")
+        address = data.get("address", "")
 
         if not all([name, email, password]):
             return jsonify({"message": "Name, email and password are required"}), 400
 
         if db().users.find_one({"email": email}):
-            return jsonify({"message": "User already exists"}), 400
+            return jsonify({"message": "An account with this email already exists"}), 400
 
         user_id = str(uuid4())
         user = {
@@ -70,10 +107,13 @@ def create_app() -> Flask:
             "email": email,
             "password": generate_password_hash(password),
             "role": role,
+            "phone": phone,
+            "address": address,
+            "createdAt": current_time_iso(),
         }
         db().users.insert_one(user)
 
-        token = make_token(user_id)
+        token = make_jwt(user_id, role)
         response_user = {k: v for k, v in user.items() if k != "password"}
         return jsonify({"user": response_user, "token": token}), 201
 
@@ -83,40 +123,37 @@ def create_app() -> Flask:
         email = data.get("email")
         password = data.get("password") or ""
 
-        if not email:
-            return jsonify({"message": "Email is required"}), 400
+        if not email or not password:
+            return jsonify({"message": "Email and password are required"}), 400
 
         user = db().users.find_one({"email": email})
 
         if not user:
-            # Auto-create for demo purposes (any email/password can log in)
-            user_id = str(uuid4())
-            user = {
-                "_id": user_id,
-                "name": (email.split("@")[0] or "User").title(),
-                "email": email,
-                "password": generate_password_hash(password),
-                "role": "consumer",
-            }
-            db().users.insert_one(user)
-        else:
-            # For demo: accept any password — just verify if it matches the hash,
-            # and if not, update the stored hash so the next login works too.
-            if not check_password_hash(user["password"], password):
-                db().users.update_one(
-                    {"_id": user["_id"]},
-                    {"$set": {"password": generate_password_hash(password)}},
-                )
+            return jsonify({"message": "No account found with this email"}), 404
 
-        token = make_token(user["_id"])
+        if not check_password_hash(user["password"], password):
+            return jsonify({"message": "Incorrect password"}), 401
+
+        token = make_jwt(user["_id"], user.get("role", "consumer"))
         response_user = {k: v for k, v in user.items() if k != "password"}
         return jsonify({"user": response_user, "token": token}), 200
+
+    @app.get("/api/auth/me")
+    @token_required
+    def get_me():
+        """Get the currently authenticated user's profile."""
+        user = db().users.find_one({"_id": request.current_user_id})
+        if not user:
+            return jsonify({"message": "User not found"}), 404
+        response_user = {k: v for k, v in user.items() if k != "password"}
+        return jsonify(response_user), 200
 
     # --------------------
     # Inventory routes
     # --------------------
 
     @app.get("/api/inventory")
+    @token_required
     def get_inventory():
         category = request.args.get("category")
         query = {"category": category} if category else {}
@@ -124,6 +161,7 @@ def create_app() -> Flask:
         return jsonify(items), 200
 
     @app.post("/api/inventory")
+    @token_required
     def create_inventory_item():
         data = request.get_json(force=True)
         item_id = str(uuid4())
@@ -143,6 +181,7 @@ def create_app() -> Flask:
         return jsonify(new_item), 201
 
     @app.get("/api/inventory/<item_id>")
+    @token_required
     def get_inventory_item(item_id: str):
         item = db().inventory.find_one({"_id": item_id})
         if not item:
@@ -150,18 +189,13 @@ def create_app() -> Flask:
         return jsonify(item), 200
 
     @app.put("/api/inventory/<item_id>")
+    @token_required
     def update_inventory_item(item_id: str):
         data = request.get_json(force=True)
         update_fields = {}
         for key in [
-            "name",
-            "category",
-            "location",
-            "quantity",
-            "unit",
-            "qualityStatus",
-            "temperature",
-            "humidity",
+            "name", "category", "location", "quantity",
+            "unit", "qualityStatus", "temperature", "humidity",
         ]:
             if key in data:
                 update_fields[key] = data[key]
@@ -177,6 +211,7 @@ def create_app() -> Flask:
         return jsonify(result), 200
 
     @app.delete("/api/inventory/<item_id>")
+    @token_required
     def delete_inventory_item(item_id: str):
         deleted = db().inventory.find_one_and_delete({"_id": item_id})
         if not deleted:
@@ -188,26 +223,31 @@ def create_app() -> Flask:
     # --------------------
 
     @app.get("/api/analytics/dashboard")
+    @token_required
     def analytics_dashboard():
         doc = db().dashboard_stats.find_one({"_id": "current"}, {"_id": 0})
         return jsonify(doc or {}), 200
 
     @app.get("/api/analytics/trends")
+    @token_required
     def analytics_trends():
         doc = db().analytics.find_one({"_id": "current"}, {"_id": 0})
         return jsonify((doc or {}).get("storageTrends", [])), 200
 
     @app.get("/api/analytics/loss")
+    @token_required
     def analytics_loss():
         doc = db().analytics.find_one({"_id": "current"}, {"_id": 0})
         return jsonify((doc or {}).get("lossAnalysis", [])), 200
 
     @app.get("/api/analytics/consumer")
+    @token_required
     def analytics_consumer():
         doc = db().consumer_data.find_one({"_id": "current"}, {"_id": 0})
         return jsonify((doc or {}).get("stats", {})), 200
 
     @app.get("/api/analytics/full")
+    @token_required
     def analytics_full():
         doc = db().analytics.find_one({"_id": "current"}, {"_id": 0})
         return jsonify(doc or {}), 200
@@ -217,6 +257,7 @@ def create_app() -> Flask:
     # --------------------
 
     @app.get("/api/consumer")
+    @token_required
     def consumer_data():
         doc = db().consumer_data.find_one({"_id": "current"}, {"_id": 0})
         return jsonify(doc or {}), 200
@@ -226,11 +267,13 @@ def create_app() -> Flask:
     # --------------------
 
     @app.get("/api/sensors/readings")
+    @token_required
     def sensor_readings():
         doc = db().sensor_readings.find_one({"_id": "current"}, {"_id": 0})
         return jsonify(doc or {}), 200
 
     @app.get("/api/sensors/alerts")
+    @token_required
     def sensor_alerts():
         severity = request.args.get("severity")
         query = {"severity": severity} if severity else {}
@@ -238,11 +281,13 @@ def create_app() -> Flask:
         return jsonify(alerts), 200
 
     @app.get("/api/sensors/silos")
+    @token_required
     def sensor_silos():
         silos = list(db().silo_status.find({}, {"_id": 0}))
         return jsonify(silos), 200
 
     @app.put("/api/sensors/alerts/<alert_id>/acknowledge")
+    @token_required
     def acknowledge_alert(alert_id: str):
         result = db().alerts.update_one(
             {"_id": alert_id},
@@ -257,11 +302,13 @@ def create_app() -> Flask:
     # --------------------
 
     @app.get("/api/logistics")
+    @token_required
     def logistics():
         doc = db().logistics.find_one({"_id": "current"}, {"_id": 0})
         return jsonify(doc or {}), 200
 
     @app.get("/api/warehouses")
+    @token_required
     def warehouses():
         items = list(db().warehouses.find({}))
         return jsonify(items), 200
@@ -288,15 +335,12 @@ Keep responses concise and helpful. Use bullet points when listing multiple item
         return genai.Client(api_key=api_key)
 
     @app.post("/api/chat")
+    @token_required
     def chat():
         client = build_gemini_client()
         if client is None:
             return (
-                jsonify(
-                    {
-                        "message": "Gemini client is not configured. Install 'google-genai' and set GOOGLE_API_KEY or GEMINI_API_KEY.",
-                    }
-                ),
+                jsonify({"message": "Gemini client is not configured. Install 'google-genai' and set GOOGLE_API_KEY or GEMINI_API_KEY."}),
                 500,
             )
 
@@ -340,7 +384,7 @@ Keep responses concise and helpful. Use bullet points when listing multiple item
         return jsonify({"reply": text}), 200
 
     # --------------------
-    # Health check
+    # Health check (public)
     # --------------------
 
     @app.get("/api/health")
