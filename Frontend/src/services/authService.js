@@ -10,8 +10,8 @@ const authService = {
         return response.data;
     },
 
-    signup: async (name, email, password, role) => {
-        const response = await api.post('/auth/signup', { name, email, password, role });
+    signup: async (name, email, password, role, phone, address) => {
+        const response = await api.post('/auth/signup', { name, email, password, role, phone, address });
         if (response.data.token) {
             localStorage.setItem('token', response.data.token);
             localStorage.setItem('user', JSON.stringify(response.data.user));

@@ -74,43 +74,58 @@
 }
 
 .input-wrapper {
+    position: relative;
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 12px var(--space-md);
+    background: white;
     border: 1px solid var(--color-border);
     border-radius: var(--radius-md);
     transition: all var(--transition-fast);
-    background: white;
 }
 
 .input-wrapper:focus-within {
     border-color: var(--color-primary);
-    box-shadow: 0 0 0 3px rgba(21, 94, 43, 0.1);
+    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
 }
 
-.input-wrapper svg {
+.input-wrapper svg:not(.input-toggle svg) {
+    position: absolute;
+    left: 1rem;
     color: var(--color-text-tertiary);
-    flex-shrink: 0;
+    pointer-events: none;
 }
 
 .input-wrapper input {
-    flex: 1;
-    color: var(--color-text-primary);
+    width: 100%;
+    padding: 0.875rem 3rem 0.875rem 2.75rem;
+    border: none;
     background: transparent;
+    color: var(--color-text-primary);
+    font-size: var(--font-size-md);
 }
 
-.input-wrapper input::placeholder {
-    color: var(--color-text-tertiary);
+.input-wrapper input:focus {
+    outline: none;
 }
 
 .input-toggle {
+    position: absolute;
+    right: 0.75rem;
+    height: 100%;
+    width: 2.5rem;
+    background: none;
+    border: none;
     color: var(--color-text-tertiary);
-    padding: 2px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    padding: 0;
 }
 
 .input-toggle:hover {
-    color: var(--color-text-primary);
+    color: var(--color-primary);
 }
 
 /* Role Selector */
