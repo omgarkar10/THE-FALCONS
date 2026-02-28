@@ -21,9 +21,9 @@ const warehouseMenu = [
 const consumerMenu = [
     { path: '/consumer/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
     { path: '/consumer/inventory', icon: Package, label: 'My Stock' },
+    { path: '/consumer/warehouses', icon: Building2, label: 'Storage Availability' },
     { path: '/consumer/shipments', icon: Truck, label: 'Shipments' },
     { path: '/consumer/quality', icon: FileCheck, label: 'Quality' },
-    { path: '/consumer/warehouses', icon: Building2, label: 'Warehouses' },
     { path: '/consumer/alerts', icon: Bell, label: 'Alerts' },
 ];
 
