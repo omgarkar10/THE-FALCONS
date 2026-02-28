@@ -174,7 +174,6 @@ export const mockWarehouseDirectory = [
         contact: { phone: '+91 124-456-7890', email: 'central@agrovault.io', manager: 'Rajesh Kumar' },
         crops: ['Wheat', 'Rice', 'Corn', 'Soybean'],
         status: 'operational',
-        coordinates: [28.4595, 77.0266],
     },
     {
         _id: '2',
@@ -186,7 +185,6 @@ export const mockWarehouseDirectory = [
         contact: { phone: '+91 253-234-5678', email: 'nashik@agrovault.io', manager: 'Priya Sharma' },
         crops: ['Apples', 'Grapes', 'Potatoes', 'Tomatoes'],
         status: 'operational',
-        coordinates: [19.9975, 73.7898],
     },
     {
         _id: '3',
@@ -198,7 +196,6 @@ export const mockWarehouseDirectory = [
         contact: { phone: '+91 2836-223-456', email: 'kandla@agrovault.io', manager: 'Amit Patel' },
         crops: ['Wheat', 'Rice', 'Barley', 'Cotton'],
         status: 'operational',
-        coordinates: [23.1362, 70.2198],
     },
     {
         _id: '4',
@@ -210,7 +207,6 @@ export const mockWarehouseDirectory = [
         contact: { phone: '+91 484-567-8901', email: 'kochi@agrovault.io', manager: 'Sunita Nair' },
         crops: ['Spices', 'Coconut', 'Rice', 'Rubber'],
         status: 'maintenance',
-        coordinates: [9.9312, 76.2673],
     },
     {
         _id: '5',
@@ -222,6 +218,5 @@ export const mockWarehouseDirectory = [
         contact: { phone: '+91 161-345-6789', email: 'ludhiana@agrovault.io', manager: 'Harpreet Singh' },
         crops: ['Wheat', 'Rice', 'Corn', 'Mustard'],
         status: 'operational',
-        coordinates: [30.9010, 75.8573],
     },
 ];
