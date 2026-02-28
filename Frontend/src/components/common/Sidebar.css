@@ -157,7 +157,17 @@
 }
 
 .collapsed .sidebar-toggle {
-    display: none;
+    display: flex;
+}
+
+.logout-button {
+    margin-top: var(--space-sm);
+    color: #ef4444 !important;
+}
+
+.logout-button:hover {
+    background: rgba(239, 68, 68, 0.1) !important;
+    color: #f87171 !important;
 }
 
 .collapsed .sidebar-link {

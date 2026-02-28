@@ -5,7 +5,6 @@ import {
     Settings, LogOut, Wheat, ChevronLeft, ChevronRight,
     Truck, FileCheck, Users, Thermometer, Wifi, Building2
 } from 'lucide-react';
-import { useState } from 'react';
 import './Sidebar.css';
 
 const warehouseMenu = [
@@ -27,8 +26,7 @@ const consumerMenu = [
     { path: '/consumer/alerts', icon: Bell, label: 'Alerts' },
 ];
 
-const Sidebar = ({ role }) => {
-    const [collapsed, setCollapsed] = useState(false);
+const Sidebar = ({ role, collapsed, setCollapsed }) => {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
     const menu = role === 'warehouse' ? warehouseMenu : consumerMenu;
@@ -47,7 +45,7 @@ const Sidebar = ({ role }) => {
                     </div>
                     {!collapsed && <span className="sidebar-title">AgroVault</span>}
                 </div>
-                <button className="sidebar-toggle" onClick={() => setCollapsed(!collapsed)}>
+                <button className="sidebar-toggle" onClick={() => setCollapsed(!collapsed)} aria-label="Toggle Sidebar">
                     {collapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
                 </button>
             </div>
@@ -82,7 +80,7 @@ const Sidebar = ({ role }) => {
                         </div>
                     </div>
                 )}
-                <button className="sidebar-link" onClick={handleLogout} title="Logout">
+                <button className="sidebar-link logout-button" onClick={handleLogout} title="Logout">
                     <LogOut size={20} />
                     {!collapsed && <span>Logout</span>}
                 </button>
