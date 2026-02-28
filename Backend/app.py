@@ -20,7 +20,7 @@ from db import get_db
 
 load_dotenv()
 
-JWT_EXPIRY_HOURS = 24
+JWT_EXPIRY_HOURS = 72
 
 
 def create_app() -> Flask:
@@ -153,7 +153,7 @@ def create_app() -> Flask:
     # --------------------
 
     @app.get("/api/inventory")
-    @token_required
+    #@token_required
     def get_inventory():
         category = request.args.get("category")
         query = {"category": category} if category else {}
