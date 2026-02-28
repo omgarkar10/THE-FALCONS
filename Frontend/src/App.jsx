@@ -19,6 +19,8 @@ import WarehouseAnalytics from './pages/warehouse/Analytics';
 import WarehouseAlerts from './pages/warehouse/Alerts';
 import WarehouseSettings from './pages/warehouse/Settings';
 import WarehouseLogistics from './pages/warehouse/Logistics';
+import WarehouseIoTSensors from './pages/warehouse/IoTSensors';
+import WarehouseQuality from './pages/warehouse/QualityControl';
 
 // Consumer Pages
 import ConsumerDashboard from './pages/consumer/Dashboard';
@@ -47,7 +49,9 @@ function App() {
             <Route path="/warehouse/dashboard" element={<WarehouseDashboard />} />
             <Route path="/warehouse/inventory" element={<WarehouseInventory />} />
             <Route path="/warehouse/storage" element={<WarehouseStorage />} />
+            <Route path="/warehouse/sensors" element={<WarehouseIoTSensors />} />
             <Route path="/warehouse/logistics" element={<WarehouseLogistics />} />
+            <Route path="/warehouse/quality" element={<WarehouseQuality />} />
             <Route path="/warehouse/analytics" element={<WarehouseAnalytics />} />
             <Route path="/warehouse/alerts" element={<WarehouseAlerts />} />
             <Route path="/warehouse/settings" element={<WarehouseSettings />} />

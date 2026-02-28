@@ -1,0 +1,218 @@
+/* Storage Monitoring Styles */
+.silo-scroll-container {
+    display: flex;
+    gap: 24px;
+    overflow-x: auto;
+    padding: 20px 4px 32px 4px;
+    margin: 0 -4px;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Custom Scrollbar */
+.silo-scroll-container::-webkit-scrollbar {
+    height: 8px;
+}
+
+.silo-scroll-container::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 10px;
+}
+
+.silo-scroll-container::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+    border: 2px solid #f1f5f9;
+}
+
+.silo-scroll-container::-webkit-scrollbar-thumb:hover {
+    background: var(--color-primary);
+}
+
+.silo-slide-card {
+    min-width: 320px;
+    flex: 0 0 320px;
+    background: white;
+    padding: 24px;
+    border-radius: 20px;
+    border: 1px solid var(--color-border-light);
+    position: relative;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    cursor: pointer;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: silo-slide-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes silo-slide-up {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.silo-slide-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+    border-color: var(--color-primary);
+}
+
+.silo-slide-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    border-radius: 20px 0 0 20px;
+}
+
+.silo-slide-card.silo-normal::before {
+    background: #22c55e;
+}
+
+.silo-slide-card.silo-warning::before {
+    background: #f59e0b;
+}
+
+.silo-slide-card.silo-critical::before {
+    background: #ef4444;
+}
+
+.silo-slide-card.silo-active::before {
+    background: #3b82f6;
+}
+
+.silo-card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: var(--space-md);
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    box-shadow: 0 0 10px currentColor;
+}
+
+.status-dot.green {
+    color: #22c55e;
+    background: currentColor;
+}
+
+.status-dot.orange {
+    color: #f59e0b;
+    background: currentColor;
+}
+
+.status-dot.red {
+    color: #ef4444;
+    background: currentColor;
+}
+
+.status-dot.blue {
+    color: #3b82f6;
+    background: currentColor;
+}
+
+.silo-name {
+    font-weight: 700;
+    font-size: 1.125rem;
+    color: var(--color-text-primary);
+}
+
+.silo-crop {
+    font-size: 0.875rem;
+    color: var(--color-text-tertiary);
+    font-weight: 500;
+}
+
+.storage-env-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.env-item {
+    background: #f8fafc;
+    padding: 12px 8px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    text-align: center;
+    transition: all 0.2s;
+}
+
+.env-item:hover {
+    background: #f1f5f9;
+}
+
+.env-icon {
+    margin-bottom: 4px;
+}
+
+.env-icon.temp {
+    color: #f97316;
+}
+
+.env-icon.humid {
+    color: #3b82f6;
+}
+
+.env-icon.co2 {
+    color: #10b981;
+}
+
+.env-value {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-text-secondary);
+}
+
+.env-label {
+    font-size: 0.7rem;
+    color: var(--color-text-tertiary);
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.silo-capacity-bar {
+    height: 6px;
+    background: #f1f5f9;
+    border-radius: 10px;
+    margin: 16px 0 8px 0;
+    overflow: hidden;
+}
+
+.silo-capacity-fill {
+    height: 100%;
+    border-radius: 10px;
+    transition: width 1s ease-out;
+}
+
+.silo-normal .silo-capacity-fill {
+    background: #155e2b;
+}
+
+.silo-warning .silo-capacity-fill {
+    background: #f59e0b;
+}
+
+.silo-critical .silo-capacity-fill {
+    background: #ef4444;
+}
+
+.silo-active .silo-capacity-fill {
+    background: #3b82f6;
+}
+
+.silo-capacity-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-text-tertiary);
+}
