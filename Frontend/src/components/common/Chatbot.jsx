@@ -1,21 +1,50 @@
 import { useState, useRef, useEffect } from 'react';
-import { MessageSquare, X, Send, Mic, MicOff, Bot, User, Loader, Volume2 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
+import { MessageSquare, X, Send, Mic, MicOff, Bot, User, Loader, Volume2, Compass } from 'lucide-react';
 import './Chatbot.css';
 
 const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
 
-const systemPrompt = `You are AgroVault AI Assistant, a helpful chatbot for a smart agricultural warehouse management platform. You help warehouse managers and consumers with:
-- Inventory management and stock queries
-- Sensor readings and environmental monitoring
-- Logistics and shipment tracking
-- Quality reports and crop storage best practices
-- General agricultural storage knowledge
+const getSystemPrompt = (role) => `You are AgroVault AI Assistant, a helpful chatbot for a smart agricultural warehouse management platform. You have two main functions:
+1. HELP: Answer questions about inventory, sensors, and logistics.
+2. NAVIGATE: Help users move through the website.
+
+The user's role is: ${role}.
+
+AVAILABLE PAGES FOR ${role.toUpperCase()}:
+${role === 'warehouse' ? `
+- Dashboard: /warehouse/dashboard
+- Inventory: /warehouse/inventory
+- Storage: /warehouse/storage
+- Sensors: /warehouse/sensors
+- Logistics: /warehouse/logistics
+- Quality Control: /warehouse/quality
+- Analytics: /warehouse/analytics
+- Alerts: /warehouse/alerts
+- Settings: /warehouse/settings
+` : `
+- Dashboard: /consumer/dashboard
+- Inventory: /consumer/inventory
+- Shipments: /consumer/shipments
+- Quality: /consumer/quality
+- Warehouses: /consumer/warehouses
+- Alerts: /consumer/alerts
+`}
+
+COMMANDS:
+If the user wants to go to a specific page (e.g., "Take me to inventory", "Show sensors", "Open settings"), respond with:
+"Sure, taking you to the [Page Name] now. [[NAVIGATE:path]]"
+Replace 'path' with the actual path from the list above.
+
 Keep responses concise and helpful. Use bullet points when listing multiple items.`;
 
 const Chatbot = () => {
+    const { user } = useAuth();
+    const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false);
     const [messages, setMessages] = useState([
-        { role: 'assistant', content: 'Hi! I\'m your AgroVault AI assistant. How can I help you with your warehouse operations today?' },
+        { role: 'assistant', content: 'Hi! I\'m your AgroVault AI assistant. I can help you with info or help you navigate the site. Try saying "Go to inventory" or "Show me analytics"!' },
     ]);
     const [input, setInput] = useState('');
     const [loading, setLoading] = useState(false);
@@ -42,6 +71,12 @@ const Chatbot = () => {
                 const transcript = event.results[0][0].transcript;
                 setInput(transcript);
                 setIsListening(false);
+                // Auto-send if it sounds like a command
+                if (transcript.toLowerCase().includes('go to') || 
+                    transcript.toLowerCase().includes('show') || 
+                    transcript.toLowerCase().includes('open')) {
+                    setTimeout(() => handleNavigationCommand(transcript), 500);
+                }
             };
 
             recognition.onerror = () => {
@@ -54,7 +89,67 @@ const Chatbot = () => {
 
             recognitionRef.current = recognition;
         }
-    }, []);
+    }, [user]);
+
+    const handleNavigationCommand = (text) => {
+        if (!user) return false;
+        const lowText = text.toLowerCase();
+        const role = user.role || 'consumer';
+        
+        const routes = {
+            warehouse: {
+                'dashboard': '/warehouse/dashboard',
+                'home': '/warehouse/dashboard',
+                'inventory': '/warehouse/inventory',
+                'stock': '/warehouse/inventory',
+                'storage': '/warehouse/storage',
+                'silo': '/warehouse/storage',
+                'sensor': '/warehouse/sensors',
+                'iot': '/warehouse/sensors',
+                'logistics': '/warehouse/logistics',
+                'shipment': '/warehouse/logistics',
+                'truck': '/warehouse/logistics',
+                'quality': '/warehouse/quality',
+                'check': '/warehouse/quality',
+                'analytic': '/warehouse/analytics',
+                'statistic': '/warehouse/analytics',
+                'trend': '/warehouse/analytics',
+                'alert': '/warehouse/alerts',
+                'warning': '/warehouse/alerts',
+                'setting': '/warehouse/settings',
+                'profile': '/warehouse/settings',
+            },
+            consumer: {
+                'dashboard': '/consumer/dashboard',
+                'home': '/consumer/dashboard',
+                'inventory': '/consumer/inventory',
+                'stock': '/consumer/inventory',
+                'shipment': '/consumer/shipments',
+                'order': '/consumer/shipments',
+                'quality': '/consumer/quality',
+                'warehouse': '/consumer/warehouses',
+                'map': '/consumer/warehouses',
+                'alert': '/consumer/alerts',
+            }
+        };
+
+        const roleRoutes = routes[role] || routes.consumer;
+        
+        for (const [key, path] of Object.entries(roleRoutes)) {
+            if (lowText.includes(key)) {
+                setMessages(prev => [...prev, 
+                    { role: 'user', content: text },
+                    { role: 'assistant', content: `Sure! Navigating you to the ${key} page now.` }
+                ]);
+                setTimeout(() => {
+                    navigate(path);
+                    setIsOpen(false);
+                }, 1000);
+                return true;
+            }
+        }
+        return false;
+    };
 
     const toggleVoice = () => {
         if (!recognitionRef.current) {
@@ -76,7 +171,8 @@ const Chatbot = () => {
             setIsSpeaking(false);
             return;
         }
-        const cleanText = text.replace(/[*#_~`]/g, '').replace(/\n/g, '. ');
+        // Remove navigation tags before speaking
+        const cleanText = text.replace(/\[\[NAVIGATE:.*?\]\]/g, '').replace(/[*#_~`]/g, '').replace(/\n/g, '. ');
         const utterance = new SpeechSynthesisUtterance(cleanText);
         utterance.rate = 1;
         utterance.pitch = 1;
@@ -88,9 +184,16 @@ const Chatbot = () => {
     const sendMessage = async () => {
         if (!input.trim() || loading) return;
 
-        const userMessage = { role: 'user', content: input.trim() };
-        setMessages((prev) => [...prev, userMessage]);
+        const originalInput = input.trim();
         setInput('');
+
+        // Try local navigation first
+        if (handleNavigationCommand(originalInput)) {
+            return;
+        }
+
+        const userMessage = { role: 'user', content: originalInput };
+        setMessages((prev) => [...prev, userMessage]);
         setLoading(true);
 
         const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
@@ -98,14 +201,15 @@ const Chatbot = () => {
         if (!apiKey) {
             setMessages((prev) => [
                 ...prev,
-                { role: 'assistant', content: '⚠️ Gemini API key not configured. Add `VITE_GEMINI_API_KEY` to your `.env` file in the Frontend directory.\n\nExample:\n```\nVITE_GEMINI_API_KEY=your_api_key_here\n```' },
+                { role: 'assistant', content: '⚠️ Gemini API key not configured. Add `VITE_GEMINI_API_KEY` to your `.env` file in the Frontend directory.' },
             ]);
             setLoading(false);
             return;
         }
 
         try {
-            const conversationHistory = messages.map((m) => ({
+            const role = user?.role || 'consumer';
+            const conversationHistory = messages.slice(-5).map((m) => ({
                 role: m.role === 'assistant' ? 'model' : 'user',
                 parts: [{ text: m.content }],
             }));
@@ -114,14 +218,14 @@ const Chatbot = () => {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    system_instruction: { parts: [{ text: systemPrompt }] },
+                    system_instruction: { parts: [{ text: getSystemPrompt(role) }] },
                     contents: [
                         ...conversationHistory,
                         { role: 'user', parts: [{ text: userMessage.content }] },
                     ],
                     generationConfig: {
                         temperature: 0.7,
-                        maxOutputTokens: 1024,
+                        maxOutputTokens: 512,
                     },
                 }),
             });
@@ -129,8 +233,21 @@ const Chatbot = () => {
             const data = await response.json();
 
             if (data.candidates && data.candidates[0]?.content?.parts?.[0]?.text) {
-                const assistantText = data.candidates[0].content.parts[0].text;
-                setMessages((prev) => [...prev, { role: 'assistant', content: assistantText }]);
+                let assistantText = data.candidates[0].content.parts[0].text;
+                
+                // Check if the AI wants to navigate
+                const navMatch = assistantText.match(/\[\[NAVIGATE:(.*?)\]\]/);
+                if (navMatch) {
+                    const navPath = navMatch[1];
+                    const cleanText = assistantText.replace(/\[\[NAVIGATE:.*?\]\]/g, '').trim();
+                    setMessages((prev) => [...prev, { role: 'assistant', content: cleanText }]);
+                    setTimeout(() => {
+                        navigate(navPath);
+                        setIsOpen(false);
+                    }, 1500);
+                } else {
+                    setMessages((prev) => [...prev, { role: 'assistant', content: assistantText }]);
+                }
             } else {
                 setMessages((prev) => [
                     ...prev,
@@ -140,7 +257,7 @@ const Chatbot = () => {
         } catch (error) {
             setMessages((prev) => [
                 ...prev,
-                { role: 'assistant', content: `Error connecting to AI: ${error.message}. Please check your API key and network connection.` },
+                { role: 'assistant', content: `Error connecting to AI: ${error.message}` },
             ]);
         }
 
@@ -155,7 +272,7 @@ const Chatbot = () => {
     };
 
     const formatMessage = (text) => {
-        // Basic markdown: bold, code blocks, bullet points
+        if (!text) return '';
         return text
             .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
             .replace(/`([^`]+)`/g, '<code>$1</code>')
@@ -173,7 +290,7 @@ const Chatbot = () => {
                 onClick={() => setIsOpen(!isOpen)}
                 title="AgroVault AI Assistant"
             >
-                {isOpen ? <X size={24} /> : <MessageSquare size={24} />}
+                {isOpen ? <X size={24} /> : <Compass size={24} className="animate-pulse" />}
             </button>
 
             {/* Chat Window */}
@@ -184,7 +301,7 @@ const Chatbot = () => {
                             <div className="chatbot-avatar"><Bot size={20} /></div>
                             <div>
                                 <div className="chatbot-title">AgroVault AI</div>
-                                <div className="chatbot-subtitle">Powered by Gemini</div>
+                                <div className="chatbot-subtitle">Voice Navigation Enabled</div>
                             </div>
                         </div>
                         <button className="chatbot-close" onClick={() => setIsOpen(false)}>
@@ -238,7 +355,7 @@ const Chatbot = () => {
                         </button>
                         <input
                             type="text"
-                            placeholder={isListening ? 'Listening...' : 'Ask me anything...'}
+                            placeholder={isListening ? 'Listening...' : 'Type "Go to inventory"...'}
                             value={input}
                             onChange={(e) => setInput(e.target.value)}
                             onKeyDown={handleKeyDown}
