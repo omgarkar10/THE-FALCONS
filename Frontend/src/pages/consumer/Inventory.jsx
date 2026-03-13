@@ -25,7 +25,7 @@ const columns = [
 
 const ConsumerInventory = () => {
     return (
-        <div className="dashboard-page">
+        <div className="dashboard-page reveal-up">
             <div className="dashboard-page-header">
                 <h1>My Stock</h1>
                 <p>Track your stored crops and inventory</p>

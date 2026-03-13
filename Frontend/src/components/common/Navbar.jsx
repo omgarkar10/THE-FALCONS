@@ -16,8 +16,10 @@ const Navbar = () => {
         if (el) el.scrollIntoView({ behavior: 'smooth' });
     };
 
+    const isLanding = location.pathname === '/';
+
     return (
-        <nav className="navbar">
+        <nav className={`navbar ${isLanding ? 'dark' : ''}`}>
             <div className="navbar-inner container-wide">
                 <Link to="/" className="navbar-brand">
                     <div className="navbar-logo">

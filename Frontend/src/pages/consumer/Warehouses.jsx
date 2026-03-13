@@ -1,167 +1,154 @@
 import { useState, useMemo } from 'react';
-import { Building2, MapPin, Phone, Mail, User, Database, Activity, Map as MapIcon, Search } from 'lucide-react';
-import { mockWarehouseDirectory } from '../../data/mockData';
-import WarehousesMap from '../../components/common/WarehousesMap';
-import '../warehouse/Dashboard.css';
-import '../warehouse/Logistics.css';
-import './Warehouses.css'; // Add dedicated premium styling
+import { MapPin, Search, Phone, Mail, ChevronRight, Filter, Star, Info } from 'lucide-react';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+import { mockConsumerData } from '../../data/mockData';
+import './Warehouses.css';
 
 const Warehouses = () => {
-    const [searchTerm, setSearchTerm] = useState('');
-    const [filterCrop, setFilterCrop] = useState('All');
+    const { warehouses } = mockConsumerData;
+    const [searchQuery, setSearchQuery] = useState('');
+    const [filterStatus, setFilterStatus] = useState('all');
 
-    // Derived full list of unique crops for the filter
-    const allCrops = useMemo(() => {
-        const crops = new Set();
-        mockWarehouseDirectory.forEach(w => w.crops.forEach(c => crops.add(c)));
-        return ['All', ...Array.from(crops).sort()];
-    }, []);
-
-    // Filter logic
-    const filteredWarehouses = mockWarehouseDirectory.filter(w => {
-        const matchesSearch = w.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            w.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            w.contact.manager.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesCrop = filterCrop === 'All' || w.crops.includes(filterCrop);
-        return matchesSearch && matchesCrop;
-    });
-
-    const totalCapacity = mockWarehouseDirectory.reduce((acc, w) => acc + w.totalCapacity, 0);
-    const totalUsed = mockWarehouseDirectory.reduce((acc, w) => acc + w.usedCapacity, 0);
-    const percentage = Math.round((totalUsed / totalCapacity) * 100);
-    const operationalCount = mockWarehouseDirectory.filter(w => w.status === 'operational').length;
+    const filteredWarehouses = useMemo(() => {
+        return warehouses.filter(w => {
+            const matchesSearch = w.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                w.location.toLowerCase().includes(searchQuery.toLowerCase());
+            const matchesFilter = filterStatus === 'all' || w.status === filterStatus;
+            return matchesSearch && matchesFilter;
+        });
+    }, [warehouses, searchQuery, filterStatus]);
 
     return (
-        <div className="dashboard-page warehouses-premium-page">
-            <div className="flex-between">
-                <div className="dashboard-page-header">
-                    <h1 className="gradient-text">Storage Availability & Logistics</h1>
-                    <p>Real-time network capacity tracking and interactive warehouse directory</p>
+        <div className="dashboard-page warehouses-premium">
+            <div className="dashboard-page-header">
+                <div>
+                    <h1>Facility Directory</h1>
+                    <p>Discover and manage your storage across our network</p>
                 </div>
             </div>
 
-            {/* Premium Overview KPI Cards */}
-            <div className="grid grid-3 kpi-grid premium-kpi-grid">
-                <div className="card premium-kpi-card glassmorphism">
-                    <div className="kpi-icon-wrapper blue-glow">
-                        <Database size={24} />
-                    </div>
+            <div className="grid grid-3 kpi-grid">
+                <div className="card stat-mini reveal-up">
+                    <div className="stat-mini-icon blue"><MapPin size={20} /></div>
                     <div>
-                        <div className="kpi-value">{totalCapacity.toLocaleString()} <span className="kpi-unit">Tons</span></div>
-                        <div className="kpi-label">Total Network Capacity</div>
+                        <span className="stat-mini-label">Total Facilities</span>
+                        <h3 className="stat-mini-val">{warehouses.length}</h3>
                     </div>
                 </div>
-
-                <div className="card premium-kpi-card glassmorphism">
-                    <div className="kpi-icon-wrapper green-glow">
-                        <Activity size={24} />
-                    </div>
+                <div className="card stat-mini reveal-up" style={{ animationDelay: '0.1s' }}>
+                    <div className="stat-mini-icon green"><Star size={20} /></div>
                     <div>
-                        <div className="kpi-value">{percentage}%</div>
-                        <div className="kpi-label">Network Utilization</div>
-                        <div className="capacity-mini-bar">
-                            <div className="capacity-mini-fill" style={{ width: `${percentage}%` }} />
-                        </div>
+                        <span className="stat-mini-label">Active Storage</span>
+                        <h3 className="stat-mini-val">{warehouses.filter(w => w.status === 'active').length}</h3>
                     </div>
                 </div>
-
-                <div className="card premium-kpi-card glassmorphism">
-                    <div className="kpi-icon-wrapper purple-glow">
-                        <Building2 size={24} />
-                    </div>
+                <div className="card stat-mini reveal-up" style={{ animationDelay: '0.2s' }}>
+                    <div className="stat-mini-icon orange"><Info size={20} /></div>
                     <div>
-                        <div className="kpi-value">{operationalCount} <span className="kpi-unit">/ {mockWarehouseDirectory.length}</span></div>
-                        <div className="kpi-label">Operational Warehouses</div>
+                        <span className="stat-mini-label">Maintenance</span>
+                        <h3 className="stat-mini-val">{warehouses.filter(w => w.status === 'maintenance').length}</h3>
                     </div>
                 </div>
             </div>
 
-            {/* Interactive Map Section */}
-            <div className="card map-card glassmorphism">
-                <div className="map-card-header">
-                    <h2><MapIcon size={20} /> Network Geo-Distribution</h2>
+            <div className="directory-controls">
+                <div className="premium-search-bar">
+                    <Search size={18} className="search-icon" />
+                    <input
+                        type="text"
+                        placeholder="Search by name or location..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                    />
                 </div>
-                {/* Embedded React Leaflet Component */}
-                <WarehousesMap warehouses={filteredWarehouses} />
-            </div>
-
-            {/* Interactive Directory Section Component */}
-            <div className="directory-header-actions">
-                <h2>Available Storage Facilities</h2>
-                <div className="directory-filters">
-                    <div className="search-bar premium-search">
-                        <Search size={18} />
-                        <input
-                            type="text"
-                            placeholder="Search by name, location, or manager..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                        />
-                    </div>
-                    <select
-                        className="premium-select"
-                        value={filterCrop}
-                        onChange={(e) => setFilterCrop(e.target.value)}
-                    >
-                        {allCrops.map(c => <option key={c} value={c}>{c === 'All' ? 'All Crop Types' : c}</option>)}
+                <div className="filter-group">
+                    <Filter size={16} />
+                    <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)} className="premium-select">
+                        <option value="all">All Status</option>
+                        <option value="active">Active</option>
+                        <option value="maintenance">Maintenance</option>
                     </select>
                 </div>
             </div>
 
-            <div className="warehouse-dir-grid premium-dir-grid">
-                {filteredWarehouses.length === 0 ? (
-                    <div className="empty-state">No warehouses match your search criteria.</div>
-                ) : (
-                    filteredWarehouses.map((w) => {
-                        const usagePercent = Math.round((w.usedCapacity / w.totalCapacity) * 100);
-                        const fillClass = usagePercent > 85 ? 'critical-glow' : usagePercent > 70 ? 'warning-glow' : 'success-glow';
-                        return (
-                            <div key={w._id} className={`card premium-warehouse-card ${w.status === 'maintenance' ? 'maintenance-blur' : ''}`}>
-                                <div className="wdc-header">
-                                    <h3>{w.name}</h3>
-                                    <span className={`status-dot ${w.status === 'operational' ? 'pulse-green' : 'pulse-orange'}`} title={w.status} />
-                                </div>
-                                <div className="wdc-location">
-                                    <MapPin size={16} className="loc-icon" /> {w.location}
-                                </div>
-
-                                {/* Advanced Interactive Capacity Bar */}
-                                <div className="premium-capacity-container">
-                                    <div className="premium-capacity-header">
-                                        <span className="premium-capacity-label">Storage Utilized</span>
-                                        <span className={`premium-capacity-value ${fillClass.split('-')[0]}`}>{usagePercent}%</span>
+            <div className="warehouses-layout">
+                <div className="warehouses-list-panel">
+                    <div className="grid-list">
+                        {filteredWarehouses.map((w, i) => (
+                            <div key={w._id} className={`premium-w-card reveal-up ${w.status}`} style={{ animationDelay: `${i * 0.05}s` }}>
+                                <div className="w-card-header">
+                                    <div className="w-status-indicator">
+                                        <span className={`status-dot ${w.status}`} />
+                                        {w.status}
                                     </div>
-                                    <div className="premium-capacity-bar-bg">
-                                        <div className={`premium-capacity-fill ${fillClass}`} style={{ width: `${usagePercent}%` }} />
-                                    </div>
-                                    <div className="premium-capacity-raw">
-                                        {w.usedCapacity.toLocaleString()} / {w.totalCapacity.toLocaleString()} tons
+                                    <div className="w-rating">
+                                        <Star size={12} fill="#f59e0b" color="#f59e0b" />
+                                        <span>4.8</span>
                                     </div>
                                 </div>
 
-                                <div className="premium-crops">
-                                    {w.crops.map((c) => (
-                                        <span key={c} className="premium-crop-tag">{c}</span>
+                                <h3 className="w-name">{w.name}</h3>
+                                <div className="w-location">
+                                    <MapPin size={14} />
+                                    <span>{w.location}</span>
+                                </div>
+
+                                <div className="w-capacity-info">
+                                    <div className="w-cap-header">
+                                        <span>Capacity Utilization</span>
+                                        <span>{w.capacity}%</span>
+                                    </div>
+                                    <div className="w-cap-bar">
+                                        <div className="w-cap-fill" style={{ width: `${w.capacity}%`, background: w.capacity > 90 ? '#ef4444' : w.capacity > 70 ? '#f59e0b' : '#22c55e' }} />
+                                    </div>
+                                </div>
+
+                                <div className="w-crops">
+                                    {w.crops.slice(0, 3).map(c => (
+                                        <span key={c} className="w-crop-tag">{c}</span>
                                     ))}
+                                    {w.crops.length > 3 && <span className="w-crop-tag more">+{w.crops.length - 3} more</span>}
                                 </div>
 
-                                <div className="premium-contact">
-                                    <div className="premium-contact-row manager-row">
-                                        <div className="manager-avatar">{w.contact.manager.charAt(0)}</div>
-                                        <div className="manager-info">
-                                            <span className="manager-title">Site Manager</span>
-                                            <span className="manager-name">{w.contact.manager}</span>
+                                <div className="w-footer">
+                                    <div className="w-manager">
+                                        <div className="w-avatar">{w.manager.name[0]}</div>
+                                        <div className="w-manager-info">
+                                            <span className="w-m-label">Manager</span>
+                                            <span className="w-m-name">{w.manager.name}</span>
                                         </div>
                                     </div>
-                                    <div className="contact-actions">
-                                        <a href={`tel:${w.contact.phone}`} className="action-button call-btn"><Phone size={14} /> Call</a>
-                                        <a href={`mailto:${w.contact.email}`} className="action-button email-btn"><Mail size={14} /> Email</a>
-                                    </div>
+                                    <button className="w-details-btn">
+                                        <ChevronRight size={18} />
+                                    </button>
                                 </div>
                             </div>
-                        );
-                    })
-                )}
+                        ))}
+                    </div>
+                </div>
+
+                {/* Map Panel */}
+                <div className="warehouses-map-panel">
+                    <div className="map-container-wrap card">
+                        <MapContainer center={[18.5204, 73.8567]} zoom={7} scrollWheelZoom={false} style={{ height: '100%', width: '100%', borderRadius: '12px' }}>
+                            <TileLayer
+                                url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+                                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+                            />
+                            {filteredWarehouses.map(w => (
+                                <Marker key={w._id} position={[18.52 + Math.random() * 2, 73.85 + Math.random() * 2]}>
+                                    <Popup>
+                                        <div className="map-popup">
+                                            <strong>{w.name}</strong><br />
+                                            {w.location}
+                                        </div>
+                                    </Popup>
+                                </Marker>
+                            ))}
+                        </MapContainer>
+                    </div>
+                </div>
             </div>
         </div>
     );

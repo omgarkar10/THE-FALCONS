@@ -211,21 +211,3 @@
 .auth-footer a:hover {
     text-decoration: underline;
 }
-
-@media (max-width: 480px) {
-    .auth-card {
-        padding: var(--space-xl) var(--space-lg);
-    }
-
-    .role-selector {
-        grid-template-columns: 1fr;
-    }
-
-    .demo-buttons {
-        grid-template-columns: 1fr;
-    }
-
-    .auth-logo {
-        margin-bottom: var(--space-md);
-    }
-}

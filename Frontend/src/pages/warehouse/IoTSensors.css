@@ -459,33 +459,3 @@
     font-weight: 600;
     cursor: pointer;
 }
-
-@media (max-width: 768px) {
-    .sensors-page {
-        padding: var(--space-md);
-    }
-
-    .sensors-page-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: var(--space-md);
-    }
-
-    .btn-sync {
-        width: 100%;
-        justify-content: center;
-    }
-
-    .summary-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .sensors-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .modal-content {
-        padding: var(--space-lg);
-        width: 95%;
-    }
-}
