@@ -171,12 +171,6 @@
     }
 }
 
-.pill-dot {
-    color: var(--lp-green);
-    font-size: 10px;
-    margin: 0 4px;
-}
-
 .lp-pill-live {
     font-size: 10px;
     font-weight: 800;
@@ -462,7 +456,18 @@
 .lp-ticker-slide {
     display: flex;
     gap: 48px;
+    animation: ticker-roll 22s linear infinite;
     width: max-content;
+}
+
+@keyframes ticker-roll {
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(-50%);
+    }
 }
 
 .lp-ticker-item {
