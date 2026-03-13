@@ -28,7 +28,7 @@ const consumerMenu = [
     { path: '/consumer/alerts', icon: Bell, label: 'Alerts' },
 ];
 
-const Sidebar = ({ role, collapsed, setCollapsed }) => {
+const Sidebar = ({ role, collapsed, setCollapsed, mobileOpen, setMobileOpen }) => {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
     const menu = role === 'warehouse' ? warehouseMenu : consumerMenu;
@@ -38,22 +38,34 @@ const Sidebar = ({ role, collapsed, setCollapsed }) => {
         navigate('/');
     };
 
+    const handleLinkClick = () => {
+        if (window.innerWidth < 1024 && setMobileOpen) {
+            setMobileOpen(false);
+        }
+    };
+
     return (
-        <aside className={`sidebar ${collapsed ? 'collapsed' : ''}`}>
+        <aside className={`sidebar ${collapsed ? 'collapsed' : ''} ${mobileOpen ? 'mobile-show' : ''}`}>
             <div className="sidebar-header">
                 <div className="sidebar-brand">
                     <div className="sidebar-logo">
                         <Wheat size={20} />
                     </div>
-                    {!collapsed && <span className="sidebar-title">AgroVault</span>}
+                    <span className="sidebar-title">AgroVault</span>
                 </div>
+                
+                {/* Mobile close button */}
+                <button className="mobile-close-btn" onClick={() => setMobileOpen(false)}>
+                    <X size={20} />
+                </button>
+
                 <button className="sidebar-toggle" onClick={() => setCollapsed(!collapsed)} aria-label="Toggle Sidebar">
                     {collapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
                 </button>
             </div>
 
             <div className="sidebar-label">
-                {!collapsed && (role === 'warehouse' ? 'WAREHOUSE' : 'CONSUMER')}
+                {(role === 'warehouse' ? 'WAREHOUSE' : 'CONSUMER')}
             </div>
 
             <nav className="sidebar-nav">
@@ -61,17 +73,18 @@ const Sidebar = ({ role, collapsed, setCollapsed }) => {
                     <NavLink
                         key={item.path}
                         to={item.path}
+                        onClick={handleLinkClick}
                         className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}
                         title={collapsed ? item.label : undefined}
                     >
                         <item.icon size={20} />
-                        {!collapsed && <span>{item.label}</span>}
+                        <span>{item.label}</span>
                     </NavLink>
                 ))}
             </nav>
 
             <div className="sidebar-footer">
-                {!collapsed && user && (
+                {user && (
                     <div className="sidebar-user">
                         <div className="sidebar-avatar">
                             {user.name?.charAt(0).toUpperCase()}
@@ -82,13 +95,21 @@ const Sidebar = ({ role, collapsed, setCollapsed }) => {
                         </div>
                     </div>
                 )}
-                <button className="sidebar-link logout-button" onClick={handleLogout} title="Logout">
+                <button 
+                    className="sidebar-link logout-button" 
+                    onClick={() => {
+                        handleLogout();
+                        handleLinkClick();
+                    }} 
+                    title="Logout"
+                >
                     <LogOut size={20} />
-                    {!collapsed && <span>Logout</span>}
+                    <span>Logout</span>
                 </button>
             </div>
         </aside>
     );
 };
+
 
 export default Sidebar;
