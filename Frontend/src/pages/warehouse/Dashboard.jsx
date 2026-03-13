@@ -29,7 +29,7 @@ const WarehouseDashboard = () => {
     const stats = mockDashboardStats;
 
     return (
-        <div className="dashboard-page">
+        <div className="dashboard-page reveal-up">
             <div className="dashboard-page-header">
                 <h1>Dashboard Overview</h1>
                 <p>Monitor your warehouse operations in real-time</p>

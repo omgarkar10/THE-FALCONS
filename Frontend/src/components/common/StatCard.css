@@ -1,106 +1,135 @@
-.stat-card {
-    background: var(--color-card);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-lg);
-    padding: var(--space-lg);
-    transition: all var(--transition-base);
-    animation: fadeIn 0.5s ease forwards;
+/* Premium Dark StatCard */
+.stat-card-3d {
+    background: rgba(255, 255, 255, 0.035);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 14px;
+    padding: 20px 20px 18px;
+    position: relative;
+    overflow: hidden;
+    cursor: default;
+    transition: all 0.3s ease;
+    animation: sc-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+    backdrop-filter: blur(8px);
 }
 
-.stat-card:hover {
-    box-shadow: var(--shadow-md);
-    transform: translateY(-2px);
+@keyframes sc-in {
+    from {
+        opacity: 0;
+        transform: translateY(12px) scale(0.97);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
 }
 
-.stat-card-header {
+.stat-card-3d:hover {
+    border-color: color-mix(in srgb, var(--sc-accent) 35%, transparent);
+    transform: translateY(-3px);
+    box-shadow: 0 0 30px var(--sc-glow), 0 8px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* Top accent bar */
+.sc3-top-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--sc-accent), transparent);
+    opacity: 0.6;
+}
+
+/* Header row */
+.sc3-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: var(--space-md);
+    margin-bottom: 14px;
 }
 
-.stat-card-title {
-    font-size: var(--font-size-sm);
-    font-weight: 500;
-    color: var(--color-text-secondary);
+.sc3-title {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #9ca3af;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
-.stat-card-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: var(--radius-md);
+.sc3-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 9px;
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.3s;
 }
 
-.stat-icon-primary {
-    background: var(--color-primary-100);
-    color: var(--color-primary);
+.stat-card-3d:hover .sc3-icon {
+    box-shadow: 0 0 16px var(--sc-glow);
 }
 
-.stat-icon-accent {
-    background: #fff3e6;
-    color: var(--color-accent);
-}
-
-.stat-icon-info {
-    background: #dbeafe;
-    color: var(--color-info);
-}
-
-.stat-icon-warning {
-    background: #fef3c7;
-    color: var(--color-warning);
-}
-
-.stat-icon-danger {
-    background: #fee2e2;
-    color: var(--color-danger);
-}
-
-.stat-icon-success {
-    background: #dcfce7;
-    color: var(--color-success);
-}
-
-.stat-card-value {
-    font-size: var(--font-size-3xl);
-    font-weight: 800;
-    color: var(--color-text-primary);
+/* Value */
+.sc3-value {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 30px;
+    font-weight: 900;
+    color: #f0fdf4;
     line-height: 1;
-    margin-bottom: var(--space-sm);
+    margin-bottom: 10px;
+    letter-spacing: -0.02em;
 }
 
-.stat-card-unit {
-    font-size: var(--font-size-lg);
+.sc3-unit {
+    font-size: 16px;
     font-weight: 500;
-    color: var(--color-text-tertiary);
+    color: #6b7280;
     margin-left: 4px;
 }
 
-.stat-card-trend {
+/* Trend */
+.sc3-trend {
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    font-size: var(--font-size-xs);
-    font-weight: 600;
-    padding: 2px 8px;
-    border-radius: var(--radius-full);
+    font-size: 12px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 999px;
 }
 
-.trend-up {
-    background: #dcfce7;
-    color: #15803d;
+.sc3-trend.up {
+    background: rgba(34, 197, 94, 0.12);
+    color: #4ade80;
 }
 
-.trend-down {
-    background: #fee2e2;
-    color: #dc2626;
+.sc3-trend.down {
+    background: rgba(239, 68, 68, 0.12);
+    color: #f87171;
 }
 
-.trend-label {
+.sc3-trend-label {
     font-weight: 400;
-    color: var(--color-text-tertiary);
+    color: #6b7280;
     margin-left: 4px;
+}
+
+/* Hover glow overlay */
+.sc3-glow {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 0%, var(--sc-glow) 0%, transparent 65%);
+    pointer-events: none;
+    transition: opacity 0.35s ease;
+}
+
+/* Keep old classes working if used elsewhere */
+.stat-card {
+    background: rgba(255, 255, 255, 0.035);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 14px;
+    padding: 20px;
 }

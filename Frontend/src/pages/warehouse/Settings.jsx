@@ -33,7 +33,7 @@ const Settings = () => {
     ];
 
     return (
-        <div className="dashboard-page">
+        <div className="dashboard-page reveal-up">
             <div className="dashboard-page-header">
                 <h1>Settings</h1>
                 <p>Manage your account and warehouse configuration</p>

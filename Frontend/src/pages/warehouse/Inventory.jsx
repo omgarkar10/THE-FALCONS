@@ -100,7 +100,7 @@ const Inventory = () => {
     });
 
     return (
-        <div className="dashboard-page">
+        <div className="dashboard-page reveal-up">
             <div className="flex-between">
                 <div className="dashboard-page-header">
                     <h1>Inventory Management</h1>

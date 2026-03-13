@@ -21,7 +21,7 @@ const ConsumerAlerts = () => {
     const unread = notifications.filter(n => !n.read).length;
 
     return (
-        <div className="dashboard-page">
+        <div className="dashboard-page reveal-up">
             <div className="dashboard-page-header">
                 <h1>Notifications</h1>
                 <p>{unread} unread notifications</p>

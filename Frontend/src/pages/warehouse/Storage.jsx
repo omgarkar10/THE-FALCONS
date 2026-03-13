@@ -6,7 +6,7 @@ import './Dashboard.css';
 
 const Storage = () => {
     return (
-        <div className="dashboard-page overflow-hidden">
+        <div className="dashboard-page overflow-hidden reveal-up">
             <div className="dashboard-page-header">
                 <h1>Storage Monitoring</h1>
                 <p>Real-time environmental tracking per storage unit</p>
@@ -69,14 +69,15 @@ const Storage = () => {
                 </div>
                 <ResponsiveContainer width="100%" height={300}>
                     <BarChart data={mockSiloStatus} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
-                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                        <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#64748b' }} dy={10} />
-                        <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#64748b' }} unit="%" dx={-10} />
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
+                        <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#9ca3af' }} dy={10} />
+                        <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#9ca3af' }} unit="%" dx={-10} />
                         <Tooltip
-                            contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 25px rgba(0,0,0,0.1)', padding: '12px' }}
-                            cursor={{ fill: '#f8fafc' }}
+                            contentStyle={{ borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 10px 25px rgba(0,0,0,0.5)', padding: '12px', backgroundColor: 'rgba(10,20,14,0.95)', backdropFilter: 'blur(10px)', color: '#f0fdf4' }}
+                            itemStyle={{ color: '#d1fae5' }}
+                            cursor={{ fill: 'rgba(255,255,255,0.05)' }}
                         />
-                        <Bar dataKey="capacity" fill="#155e2b" radius={[6, 6, 0, 0]} barSize={40} />
+                        <Bar dataKey="capacity" fill="#22c55e" radius={[6, 6, 0, 0]} barSize={40} />
                     </BarChart>
                 </ResponsiveContainer>
             </div>

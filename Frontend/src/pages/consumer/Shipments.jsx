@@ -15,7 +15,7 @@ const Shipments = () => {
     const outbound = shipments.filter(s => s.type === 'outbound');
 
     return (
-        <div className="dashboard-page">
+        <div className="dashboard-page reveal-up">
             <div className="dashboard-page-header">
                 <h1>Shipments</h1>
                 <p>Track your inbound and outbound shipments</p>

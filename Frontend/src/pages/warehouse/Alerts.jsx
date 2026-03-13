@@ -44,7 +44,7 @@ const Alerts = () => {
     const pendingCount = mockAlerts.filter(a => !a.acknowledged).length;
 
     return (
-        <div className="dashboard-page">
+        <div className="dashboard-page reveal-up">
             <div className="flex-between">
                 <div className="dashboard-page-header">
                     <h1>Alerts Center</h1>

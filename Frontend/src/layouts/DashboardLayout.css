@@ -1,40 +1,344 @@
+/* ===================================================
+   DASHBOARD LAYOUT — Premium Dark Theme
+   =================================================== */
+
 .dashboard-layout {
     display: flex;
     min-height: 100vh;
-    background: var(--color-bg);
+    background: #07100a;
+    font-family: 'Inter', sans-serif;
 }
 
 .dashboard-main {
     flex: 1;
     margin-left: var(--sidebar-width);
-    padding: var(--space-lg) var(--space-xl);
-    transition: margin-left var(--transition-base);
+    padding: 28px 32px;
+    transition: margin-left 0.3s ease;
     min-height: 100vh;
     overflow-x: hidden;
+    background: #07100a;
+    position: relative;
+}
+
+/* Subtle grid texture on main area */
+.dashboard-main::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+        linear-gradient(rgba(34, 197, 94, 0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(34, 197, 94, 0.025) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.dashboard-main>* {
+    position: relative;
+    z-index: 1;
 }
 
 .dashboard-layout.collapsed .dashboard-main {
     margin-left: var(--sidebar-collapsed-width);
 }
 
+/* Page header */
 .dashboard-page-header {
-    margin-bottom: var(--space-xl);
+    margin-bottom: 28px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
 }
 
 .dashboard-page-header h1 {
-    font-size: var(--font-size-2xl);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 22px;
     font-weight: 800;
-    color: var(--color-text-primary);
-    margin-bottom: var(--space-xs);
+    color: #f0fdf4;
+    margin-bottom: 3px;
+    letter-spacing: -0.02em;
 }
 
 .dashboard-page-header p {
-    font-size: var(--font-size-sm);
-    color: var(--color-text-secondary);
+    font-size: 13px;
+    color: #6b7280;
+}
+
+/* Dashboard page animation */
+.dashboard-page {
+    animation: dash-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes dash-in {
+    from {
+        opacity: 0;
+        transform: translateY(16px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Cards & grids */
+.card {
+    background: rgba(255, 255, 255, 0.035) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 14px !important;
+    transition: all 0.3s ease !important;
+    backdrop-filter: blur(8px);
+}
+
+.card:hover {
+    border-color: rgba(34, 197, 94, 0.2) !important;
+    box-shadow: 0 0 24px rgba(34, 197, 94, 0.06), 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Chart cards */
+.chart-card {
+    padding: 22px !important;
+}
+
+.chart-header {
+    margin-bottom: 18px !important;
+}
+
+.chart-header h3 {
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    color: #f0fdf4 !important;
+}
+
+.chart-header p {
+    font-size: 12px !important;
+    color: #6b7280 !important;
+}
+
+/* Recharts dark overrides */
+.recharts-cartesian-grid line {
+    stroke: rgba(255, 255, 255, 0.06) !important;
+}
+
+.recharts-text {
+    fill: #6b7280 !important;
+}
+
+.recharts-tooltip-wrapper .recharts-default-tooltip {
+    background: rgba(10, 20, 14, 0.95) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    border-radius: 10px !important;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4) !important;
+    backdrop-filter: blur(10px) !important;
+    color: #f0fdf4 !important;
+}
+
+.recharts-tooltip-item {
+    color: #d1fae5 !important;
+}
+
+.recharts-tooltip-label {
+    color: #9ca3af !important;
+    font-size: 12px !important;
+}
+
+/* Silo cards — dark */
+.silo-card {
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid rgba(255, 255, 255, 0.07) !important;
+    border-radius: 10px !important;
+    transition: all 0.3s !important;
+}
+
+.silo-card:hover {
+    background: rgba(255, 255, 255, 0.06) !important;
+    transform: translateY(-2px) !important;
+}
+
+.silo-name {
+    color: #f0fdf4 !important;
+}
+
+.silo-crop {
+    color: #9ca3af !important;
+}
+
+.silo-metric {
+    color: #9ca3af !important;
+}
+
+.silo-capacity-bar {
+    background: rgba(255, 255, 255, 0.08) !important;
+}
+
+.silo-capacity-label {
+    color: #6b7280 !important;
+}
+
+/* Badges */
+.badge-success {
+    background: rgba(34, 197, 94, 0.15) !important;
+    color: #4ade80 !important;
+}
+
+.badge-warning {
+    background: rgba(245, 158, 11, 0.15) !important;
+    color: #fbbf24 !important;
+}
+
+.badge-danger {
+    background: rgba(239, 68, 68, 0.15) !important;
+    color: #f87171 !important;
+}
+
+.badge-info {
+    background: rgba(59, 130, 246, 0.15) !important;
+    color: #60a5fa !important;
+}
+
+/* Tables */
+.data-table {
+    background: transparent !important;
+}
+
+.dt-header {
+    background: rgba(255, 255, 255, 0.03) !important;
+    color: #9ca3af !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+}
+
+.dt-row {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04) !important;
+    color: #d1fae5 !important;
+}
+
+.dt-row:hover {
+    background: rgba(34, 197, 94, 0.04) !important;
+}
+
+/* Scrollbar */
+.dashboard-main::-webkit-scrollbar {
+    width: 5px;
+}
+
+.dashboard-main::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.dashboard-main::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+}
+
+.dashboard-main::-webkit-scrollbar-thumb:hover {
+    background: rgba(34, 197, 94, 0.3);
+}
+
+/* Page actions */
+.page-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.filter-select {
+    padding: 8px 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    color: #d1fae5;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.filter-select:focus {
+    border-color: rgba(34, 197, 94, 0.4);
+    outline: none;
+}
+
+/* Modals — Dark */
+.modal-overlay {
+    background: rgba(0, 0, 0, 0.75) !important;
+    backdrop-filter: blur(8px) !important;
+}
+
+.modal-card {
+    background: #0a140e !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    border-radius: 20px !important;
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.6), 0 0 30px rgba(34, 197, 94, 0.05) !important;
+    padding: 32px !important;
+    color: #f0fdf4 !important;
+}
+
+.modal-card h2 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 800;
+    font-size: 22px;
+    margin-bottom: 8px;
+}
+
+.modal-card p {
+    font-size: 14px;
+    color: #6b7280;
+}
+
+/* Modal Form */
+.modal-card .form-group label {
+    color: #d1fae5 !important;
+    font-weight: 600;
+    font-size: 13px;
+    margin-bottom: 6px;
+    display: block;
+}
+
+.modal-card .input-wrapper {
+    background: rgba(255, 255, 255, 0.04) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 10px !important;
+}
+
+.modal-card .input-wrapper input {
+    color: #f0fdf4 !important;
+    padding: 12px !important;
+}
+
+.modal-card .input-wrapper input::placeholder {
+    color: #4b5563 !important;
+}
+
+/* Reveal animations */
+.reveal-up {
+    animation: reveal-up 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes reveal-up {
+    from {
+        opacity: 0;
+        transform: translateY(24px) scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
 }
 
 @media (max-width: 1024px) {
     .dashboard-main {
         margin-left: var(--sidebar-collapsed-width);
+        padding: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-main {
+        padding: 16px;
+        margin-left: 0;
     }
 }

@@ -14,7 +14,7 @@ const Quality = () => {
     const { qualityReports } = mockConsumerData;
 
     return (
-        <div className="dashboard-page">
+        <div className="dashboard-page reveal-up">
             <div className="dashboard-page-header">
                 <h1>Quality Reports</h1>
                 <p>Inspection results and quality grades for your stored crops</p>

@@ -45,7 +45,7 @@ const Analytics = () => {
     ];
 
     return (
-        <div className="dashboard-page">
+        <div className="dashboard-page reveal-up">
             <div className="dashboard-page-header">
                 <h1>Analytics & Reports</h1>
                 <p>Comprehensive warehouse performance insights</p>

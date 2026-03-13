@@ -40,7 +40,7 @@ const Logistics = () => {
     const { incomingShipments, outgoingShipments, dispatchSchedule, stats } = mockLogistics;
 
     return (
-        <div className="dashboard-page">
+        <div className="dashboard-page reveal-up">
             <div className="dashboard-page-header">
                 <h1>Logistics & Dispatch</h1>
                 <p>Manage incoming and outgoing shipments</p>
