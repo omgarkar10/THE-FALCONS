@@ -8,6 +8,35 @@
     backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--color-border-light);
     height: var(--header-height);
+    transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+/* Dark mode navbar for 3D landing */
+body:has(.landing-3d) .navbar {
+    background: rgba(5, 14, 8, 0.75);
+    border-bottom-color: rgba(255, 255, 255, 0.06);
+}
+
+body:has(.landing-3d) .navbar-brand {
+    color: #f0fdf4;
+}
+
+body:has(.landing-3d) .navbar-links button {
+    color: #9ca3af;
+}
+
+body:has(.landing-3d) .navbar-links button:hover {
+    color: #f0fdf4;
+    background: rgba(255, 255, 255, 0.06);
+}
+
+body:has(.landing-3d) .btn-ghost {
+    color: #9ca3af;
+}
+
+body:has(.landing-3d) .btn-ghost:hover {
+    color: #f0fdf4;
+    background: rgba(255, 255, 255, 0.06);
 }
 
 .navbar-inner {

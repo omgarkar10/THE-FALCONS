@@ -4,6 +4,12 @@
     padding: var(--space-3xl) 0 var(--space-lg);
 }
 
+/* Deeper dark on landing page */
+body:has(.landing-3d) .footer {
+    background: #030b05;
+    border-top: 1px solid rgba(74, 222, 128, 0.08);
+}
+
 .footer-grid {
     display: grid;
     grid-template-columns: 2fr 1fr 1fr 1fr;
