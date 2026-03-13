@@ -372,33 +372,6 @@
   color: var(--color-text-tertiary);
 }
 
-@media (max-width: 768px) {
-  .quality-metrics {
-    grid-template-columns: 1fr;
-  }
-
-  .storage-env-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .shipment-row {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 4px;
-    padding: 8px 0;
-  }
-
-  .notification-card {
-    padding: var(--space-md);
-    flex-wrap: wrap;
-    gap: var(--space-sm);
-  }
-
-  .notification-body {
-    width: 100%;
-  }
-}
-
 @media (max-width: 1024px) {
   .settings-layout {
     grid-template-columns: 1fr;
@@ -408,4 +381,4 @@
     flex-direction: row;
     overflow-x: auto;
   }
-}
+}

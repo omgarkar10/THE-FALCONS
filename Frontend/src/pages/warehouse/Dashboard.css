@@ -250,21 +250,3 @@
     border-color: var(--color-primary);
     outline: none;
 }
-
-@media (max-width: 768px) {
-    .silo-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .chart-header {
-        flex-direction: column;
-        gap: var(--space-md);
-        align-items: flex-start;
-    }
-
-    .chart-legend-inline {
-        justify-content: flex-start;
-        width: 100%;
-        flex-wrap: wrap;
-    }
-}
