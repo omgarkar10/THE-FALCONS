@@ -3,10 +3,6 @@ import { Link } from 'react-router-dom';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Stars, Float, OrbitControls, MeshDistortMaterial } from '@react-three/drei';
 import * as THREE from 'three';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-
-gsap.registerPlugin(ScrollTrigger);
 import {
     Wheat, BarChart3, Package, Database, Wifi, Truck, FileCheck,
     ArrowRight, Shield, Zap, Target, TrendingUp, Thermometer,
@@ -75,19 +71,8 @@ function ParticleField({ count = 600 }) {
 }
 
 function HeroScene() {
-    const groupRef = useRef();
-
-    useFrame((state) => {
-        const t = state.clock.getElapsedTime();
-        if (groupRef.current) {
-            // Subtle rotation based on mouse
-            groupRef.current.rotation.x = THREE.MathUtils.lerp(groupRef.current.rotation.x, state.pointer.y * 0.1, 0.05);
-            groupRef.current.rotation.y = THREE.MathUtils.lerp(groupRef.current.rotation.y, state.pointer.x * 0.1, 0.05);
-        }
-    });
-
     return (
-        <group ref={groupRef}>
+        <>
             <ambientLight intensity={0.4} />
             <pointLight position={[4, 6, 4]} intensity={2} color="#22c55e" />
             <pointLight position={[-6, -4, -3]} intensity={0.8} color="#f59e0b" />
@@ -103,7 +88,7 @@ function HeroScene() {
             <FloatingOrb position={[0.5, -1.8, -0.8]} color="#a78bfa" size={0.2} speed={1.5} />
             <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={0.35}
                 maxPolarAngle={Math.PI / 1.9} minPolarAngle={Math.PI / 2.5} />
-        </group>
+        </>
     );
 }
 
@@ -145,40 +130,19 @@ function Counter({ value, suffix = '', decimals = 0, duration = 1800 }) {
     return <span ref={ref}>{count}{suffix}</span>;
 }
 
-/* ─── Scroll Reveal Wrapper (GSAP) ─────────────────────── */
+/* ─── Reveal Wrapper ──────────────────────────────────── */
 function Reveal({ children, delay = 0, direction = 'up', className = '' }) {
-    const elRef = useRef();
-
-    useEffect(() => {
-        const el = elRef.current;
-        const xDir = direction === 'left' ? -60 : direction === 'right' ? 60 : 0;
-        const yDir = direction === 'up' ? 60 : direction === 'down' ? -60 : 0;
-
-        gsap.fromTo(el,
-            {
-                opacity: 0,
-                x: xDir,
-                y: yDir,
-                scale: 0.95
-            },
-            {
-                opacity: 1,
-                x: 0,
-                y: 0,
-                scale: 1,
-                duration: 1.2,
-                delay: delay,
-                ease: 'power4.out',
-                scrollTrigger: {
-                    trigger: el,
-                    start: 'top 88%',
-                    toggleActions: 'play none none none'
-                }
-            }
-        );
-    }, [direction, delay]);
-
-    return <div ref={elRef} className={className} style={{ opacity: 0 }}>{children}</div>;
+    const [ref, visible] = useScrollReveal({ threshold: 0.12 });
+    const transforms = { up: 'translateY(50px)', down: 'translateY(-50px)', left: 'translateX(-50px)', right: 'translateX(50px)' };
+    return (
+        <div ref={ref} className={className} style={{
+            opacity: visible ? 1 : 0,
+            transform: visible ? 'translate(0,0) scale(1)' : `${transforms[direction]} scale(0.96)`,
+            transition: `opacity 0.75s ease ${delay}s, transform 0.75s ease ${delay}s`,
+        }}>
+            {children}
+        </div>
+    );
 }
 
 /* ─── Typewriter ──────────────────────────────────────── */
@@ -261,23 +225,6 @@ export default function Landing() {
     useEffect(() => {
         const onScroll = () => setScrollY(window.scrollY);
         window.addEventListener('scroll', onScroll, { passive: true });
-
-        // Hero Entrance
-        const tl = gsap.timeline();
-        tl.fromTo('.lp-hero-pill', { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 1, ease: 'power3.out', delay: 0.5 })
-            .fromTo('.lp-hero-h1', { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 1.2, ease: 'power3.out' }, '-=0.7')
-            .fromTo('.lp-hero-sub', { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 1, ease: 'power3.out' }, '-=0.8')
-            .fromTo('.lp-hero-cta', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' }, '-=0.8')
-            .fromTo('.lp-hero-trust', { opacity: 0 }, { opacity: 1, duration: 1 }, '-=0.5');
-
-        // Ticker Looping
-        gsap.to('.lp-ticker-slide', {
-            xPercent: -50,
-            repeat: -1,
-            duration: 30,
-            ease: "none"
-        });
-
         return () => window.removeEventListener('scroll', onScroll);
     }, []);
 
@@ -295,13 +242,13 @@ export default function Landing() {
                 <div className="lp-hero-grad" />
 
                 <div className="lp-hero-body container">
-                    <div className="lp-hero-pill">
+                    <div className="lp-hero-pill lp-fade-in" style={{ animationDelay: '0.2s' }}>
                         <Zap size={13} className="lp-pill-icon" />
-                        Powered by Real-Time AI Intelligence <span className="pill-dot">●</span>
+                        Powered by AI · Real-Time Intelligence
                         <span className="lp-pill-live">LIVE</span>
                     </div>
 
-                    <h1 className="lp-hero-h1">
+                    <h1 className="lp-hero-h1 lp-fade-in" style={{ animationDelay: '0.4s' }}>
                         Transform Your<br />
                         Agricultural Storage<br />
                         <span className="lp-grad-text">
@@ -309,21 +256,21 @@ export default function Landing() {
                         </span>
                     </h1>
 
-                    <p className="lp-hero-sub">
+                    <p className="lp-hero-sub lp-fade-in" style={{ animationDelay: '0.65s' }}>
                         AgroVault is the all-in-one intelligent warehouse platform that turns your silos, sensors, and supply chains into a unified, data-driven ecosystem — cutting spoilage, boosting efficiency, and delivering complete visibility from field to consumer.
                     </p>
 
-                    <div className="lp-hero-cta">
+                    <div className="lp-hero-cta lp-fade-in" style={{ animationDelay: '0.85s' }}>
                         <Link to="/signup" className="lp-btn-primary">
-                            Get Started Free <ArrowRight size={17} />
+                            Start Free Trial <ArrowRight size={17} />
                         </Link>
                         <button className="lp-btn-ghost">
                             <span className="lp-play-btn"><Play size={14} fill="currentColor" /></span>
-                            Watch Demo
+                            Watch 2-min Demo
                         </button>
                     </div>
 
-                    <div className="lp-hero-trust">
+                    <div className="lp-hero-trust lp-fade-in" style={{ animationDelay: '1s' }}>
                         <CheckCircle2 size={14} /> No credit card required
                         <span className="lp-trust-dot" />
                         <CheckCircle2 size={14} /> 30-day free trial
@@ -345,8 +292,6 @@ export default function Landing() {
                         <span>GrainCorp — Rajesh Kumar</span>
                     </div>
                 </div>
-
-
             </section>
 
             {/* ═══ TRUSTED TICKER ═══════════════════════════════════ */}
