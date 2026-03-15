@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import { StorageProvider } from './context/StorageContext';
 import './App.css';
 
 // Layouts
@@ -33,7 +34,8 @@ import ConsumerWarehouses from './pages/consumer/Warehouses';
 function App() {
   return (
     <AuthProvider>
-      <BrowserRouter>
+      <StorageProvider>
+        <BrowserRouter>
         <Routes>
           {/* Public Routes */}
           <Route element={<PublicLayout />}>
@@ -73,6 +75,7 @@ function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
+      </StorageProvider>
     </AuthProvider>
   );
 }

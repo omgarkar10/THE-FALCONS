@@ -1,5 +1,5 @@
 import DataTable from '../../components/common/DataTable';
-import { mockConsumerData } from '../../data/mockData';
+import { useStorage } from '../../context/StorageContext';
 import '../warehouse/Dashboard.css';
 
 const columns = [
@@ -10,7 +10,7 @@ const columns = [
         header: 'Quality',
         accessor: 'quality',
         render: (row) => (
-            <span className={`badge ${row.quality === 'Premium' ? 'badge-success' : 'badge-info'}`}>
+            <span className={`badge ${row.quality === 'Premium' ? 'badge-success' : row.quality === 'Good' ? 'badge-success' : 'badge-info'}`}>
                 {row.quality}
             </span>
         ),
@@ -24,13 +24,19 @@ const columns = [
 ];
 
 const ConsumerInventory = () => {
+    const { consumerStock } = useStorage();
+
     return (
         <div className="dashboard-page reveal-up">
             <div className="dashboard-page-header">
                 <h1>My Stock</h1>
                 <p>Track your stored crops and inventory</p>
             </div>
-            <DataTable columns={columns} data={mockConsumerData.myStock} searchPlaceholder="Search my stock..." />
+            <DataTable 
+                columns={columns} 
+                data={consumerStock} 
+                searchPlaceholder="Search my stock..." 
+            />
         </div>
     );
 };

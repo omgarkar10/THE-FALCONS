@@ -75,8 +75,16 @@
 
   /* Sidebar */
   --sidebar-width: 260px;
-  --sidebar-collapsed-width: 72px;
+  --sidebar-collapsed-width: 72:px;
   --header-height: 64px;
+
+  /* Dark Theme Variables (Global) */
+  --dark-bg: #060d09;
+  --dark-bg-alt: #0a1612;
+  --dark-card: rgba(255, 255, 255, 0.03);
+  --dark-border: rgba(255, 255, 255, 0.08);
+  --dark-text: #f0fdf4;
+  --dark-text-muted: #94a3b8;
 }
 
 /* Reset & Base */
@@ -103,10 +111,18 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Dark override for 3D landing page */
-body:has(.landing-3d) {
-  background-color: #050e08;
-  color: #f0fdf4;
+/* Dark override for 3D landing page and Dashboards */
+body:has(.landing-3d),
+body:has(.dashboard-layout) {
+  background-color: var(--dark-bg);
+  color: var(--dark-text);
+}
+
+body:has(.dashboard-layout) .card {
+    background: var(--dark-card);
+    border-color: var(--dark-border);
+    color: var(--dark-text);
+    backdrop-filter: blur(10px);
 }
 
 a {

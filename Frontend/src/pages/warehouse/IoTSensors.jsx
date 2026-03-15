@@ -216,25 +216,25 @@ const IoTSensors = () => {
                             </button>
                         </div>
 
-                        <div className="modal-tabs" style={{ display: 'flex', gap: '20px', marginBottom: '20px', borderBottom: '1px solid #e2e8f0', paddingBottom: '10px' }}>
+                        <div className="modal-tabs" style={{ display: 'flex', gap: '20px', marginBottom: '20px', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '10px' }}>
                             <button
                                 className={`tab-btn ${activeTab === 'general' ? 'active' : ''}`}
                                 onClick={() => setActiveTab('general')}
-                                style={{ background: 'none', border: 'none', fontWeight: 600, color: activeTab === 'general' ? '#155e2b' : '#64748b', cursor: 'pointer', borderBottom: activeTab === 'general' ? '2px solid #155e2b' : 'none', padding: '5px 0' }}
+                                style={{ background: 'none', border: 'none', fontWeight: 700, color: activeTab === 'general' ? '#4ade80' : '#64748b', cursor: 'pointer', padding: '5px 0' }}
                             >
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><Settings size={16} /> General</div>
                             </button>
                             <button
                                 className={`tab-btn ${activeTab === 'thresholds' ? 'active' : ''}`}
                                 onClick={() => setActiveTab('thresholds')}
-                                style={{ background: 'none', border: 'none', fontWeight: 600, color: activeTab === 'thresholds' ? '#155e2b' : '#64748b', cursor: 'pointer', borderBottom: activeTab === 'thresholds' ? '2px solid #155e2b' : 'none', padding: '5px 0' }}
+                                style={{ background: 'none', border: 'none', fontWeight: 700, color: activeTab === 'thresholds' ? '#4ade80' : '#64748b', cursor: 'pointer', padding: '5px 0' }}
                             >
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><Gauge size={16} /> Thresholds</div>
                             </button>
                             <button
                                 className={`tab-btn ${activeTab === 'advanced' ? 'active' : ''}`}
                                 onClick={() => setActiveTab('advanced')}
-                                style={{ background: 'none', border: 'none', fontWeight: 600, color: activeTab === 'advanced' ? '#155e2b' : '#64748b', cursor: 'pointer', borderBottom: activeTab === 'advanced' ? '2px solid #155e2b' : 'none', padding: '5px 0' }}
+                                style={{ background: 'none', border: 'none', fontWeight: 700, color: activeTab === 'advanced' ? '#4ade80' : '#64748b', cursor: 'pointer', padding: '5px 0' }}
                             >
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><ShieldCheck size={16} /> Maintenance</div>
                             </button>
@@ -279,9 +279,9 @@ const IoTSensors = () => {
                                             step="10"
                                             value={configSensor.pingInterval}
                                             onChange={(e) => setConfigSensor({ ...configSensor, pingInterval: parseInt(e.target.value) })}
-                                            style={{ width: '100%', accentColor: '#155e2b' }}
+                                            style={{ width: '100%', accentColor: '#22c55e' }}
                                         />
-                                        <div className="flex-between" style={{ fontSize: '0.7rem', color: '#94a3b8' }}>
+                                        <div className="flex-between" style={{ fontSize: '0.7rem', color: '#64748b' }}>
                                             <span>10s (High Power)</span>
                                             <span>300s (Eco Mode)</span>
                                         </div>
@@ -315,25 +315,25 @@ const IoTSensors = () => {
                                             />
                                         </div>
                                     </div>
-                                    <div style={{ padding: '12px', background: '#f8fafc', borderRadius: '8px', borderLeft: '4px solid #3b82f6', display: 'flex', gap: '12px', alignItems: 'center' }}>
+                                    <div style={{ padding: '12px', background: 'rgba(59, 130, 246, 0.1)', borderRadius: '12px', borderLeft: '4px solid #3b82f6', display: 'flex', gap: '12px', alignItems: 'center' }}>
                                         <BellRing size={20} color="#3b82f6" />
-                                        <span style={{ fontSize: '0.85rem', color: '#475569' }}>Alerts will be triggered automatically if readings fall outside this range.</span>
+                                        <span style={{ fontSize: '0.85rem', color: '#94a3b8' }}>Alerts will be triggered automatically if readings fall outside this range.</span>
                                     </div>
                                 </div>
                             )}
 
                             {activeTab === 'advanced' && (
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                                    <div style={{ padding: '16px', background: '#fff1f2', borderRadius: '8px', border: '1px solid #fecaca' }}>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px', color: '#be123c' }}>
+                                    <div style={{ padding: '16px', background: 'rgba(239, 68, 68, 0.05)', borderRadius: '12px', border: '1px solid rgba(239, 68, 68, 0.2)' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px', color: '#ef4444' }}>
                                             <AlertTriangle size={20} />
-                                            <h4 style={{ margin: 0 }}>Critical Actions</h4>
+                                            <h4 style={{ margin: 0, fontWeight: 700 }}>Critical Actions</h4>
                                         </div>
                                         <div style={{ display: 'flex', gap: '12px' }}>
                                             <button
                                                 type="button"
                                                 className="btn-action"
-                                                style={{ background: 'white', borderColor: '#f43f5e', color: '#e11d48' }}
+                                                style={{ background: 'rgba(255, 255, 255, 0.05)', borderColor: '#ef4444', color: '#ef4444' }}
                                                 onClick={() => handleAction('Reboot')}
                                             >
                                                 <RotateCcw size={16} /> Reboot
@@ -341,7 +341,7 @@ const IoTSensors = () => {
                                             <button
                                                 type="button"
                                                 className="btn-action"
-                                                style={{ background: '#e11d48', borderColor: '#e11d48', color: 'white' }}
+                                                style={{ background: '#ef4444', borderColor: '#ef4444', color: 'white' }}
                                                 onClick={() => handleAction('Factory Reset')}
                                             >
                                                 <Power size={16} /> Reset
@@ -351,10 +351,10 @@ const IoTSensors = () => {
                                     <div className="form-group">
                                         <label>Hardware Info</label>
                                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', fontSize: '0.85rem' }}>
-                                            <div style={{ padding: '8px', background: '#f1f5f9', borderRadius: '4px' }}><b>Model:</b> AgroSense Pro</div>
-                                            <div style={{ padding: '8px', background: '#f1f5f9', borderRadius: '4px' }}><b>Firmware:</b> {configSensor.firmware}</div>
-                                            <div style={{ padding: '8px', background: '#f1f5f9', borderRadius: '4px' }}><b>Uptime:</b> 14d 6h 22m</div>
-                                            <div style={{ padding: '8px', background: '#f1f5f9', borderRadius: '4px' }}><b>MAC:</b> 00:1B:44:11:3A:B7</div>
+                                            <div style={{ padding: '10px', background: 'rgba(34, 197, 94, 0.05)', border: '1px solid rgba(34, 197, 94, 0.1)', borderRadius: '8px', color: '#f0fdf4' }}><b>Model:</b> AgroSense Pro</div>
+                                            <div style={{ padding: '10px', background: 'rgba(34, 197, 94, 0.05)', border: '1px solid rgba(34, 197, 94, 0.1)', borderRadius: '8px', color: '#f0fdf4' }}><b>Firmware:</b> {configSensor.firmware}</div>
+                                            <div style={{ padding: '10px', background: 'rgba(34, 197, 94, 0.05)', border: '1px solid rgba(34, 197, 94, 0.1)', borderRadius: '8px', color: '#f0fdf4' }}><b>Uptime:</b> 14d 6h 22m</div>
+                                            <div style={{ padding: '10px', background: 'rgba(34, 197, 94, 0.05)', border: '1px solid rgba(34, 197, 94, 0.1)', borderRadius: '8px', color: '#f0fdf4' }}><b>MAC:</b> 00:1B:44:11:3A:B7</div>
                                         </div>
                                     </div>
                                 </div>

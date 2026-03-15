@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Plus, Filter } from 'lucide-react';
 import DataTable from '../../components/common/DataTable';
-import api from '../../services/api';
+import { useStorage } from '../../context/StorageContext';
 import './Dashboard.css';
 
 const categories = ['All', 'Grains', 'Oilseeds', 'Fruits', 'Vegetables', 'Fibers'];
@@ -22,6 +22,11 @@ const columns = [
         ),
     },
     {
+        header: 'Owner',
+        accessor: 'farmerName',
+        render: (row) => <span style={{ color: '#22c55e', fontStyle: 'italic' }}>{row.farmerName || 'AgroVault'}</span>
+    },
+    {
         header: 'Last Checked',
         accessor: 'lastChecked',
         render: (row) => new Date(row.lastChecked).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }),
@@ -29,8 +34,9 @@ const columns = [
 ];
 
 const Inventory = () => {
-    const [inventoryData, setInventoryData] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const { warehouseInventory, addStockToFarmer } = useStorage();
+    const [inventoryData, setInventoryData] = useState(warehouseInventory);
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
     const [category, setCategory] = useState('All');
@@ -40,51 +46,37 @@ const Inventory = () => {
     const [showModal, setShowModal] = useState(false);
     const [newItemName, setNewItemName] = useState('');
     const [newItemCategory, setNewItemCategory] = useState(categories[1]);
+    const [newItemFarmer, setNewItemFarmer] = useState('');
     const [newItemLocation, setNewItemLocation] = useState('');
     const [newItemQuantity, setNewItemQuantity] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const fetchInventory = async () => {
-        try {
-            setLoading(true);
-            const response = await api.get('/inventory');
-            setInventoryData(response.data);
-            setError(null);
-        } catch (err) {
-            console.error('Error fetching inventory:', err);
-            setError('Failed to load inventory data');
-        } finally {
-            setLoading(false);
-        }
-    };
-
     useEffect(() => {
-        fetchInventory();
-    }, []);
+        setInventoryData(warehouseInventory);
+    }, [warehouseInventory]);
 
     const handleAddAsset = async (e) => {
         e.preventDefault();
         setIsSubmitting(true);
         try {
-            const newItem = {
-                name: newItemName,
+            const formData = {
+                commodity: newItemName,
                 category: newItemCategory,
+                farmerName: newItemFarmer,
                 location: newItemLocation,
                 quantity: Number(newItemQuantity),
-                unit: 'tons',
-                qualityStatus: 'Good'
+                unit: 'tons'
             };
-            await api.post('/inventory', newItem);
+
+            addStockToFarmer(formData);
 
             // Reset form
             setNewItemName('');
             setNewItemCategory(categories[1]);
+            setNewItemFarmer('');
             setNewItemLocation('');
             setNewItemQuantity('');
             setShowModal(false);
-
-            // Re-fetch data
-            fetchInventory();
         } catch (err) {
             console.error('Error adding asset:', err);
             alert('Failed to add asset. Please try again.');
@@ -151,10 +143,23 @@ const Inventory = () => {
                                 </div>
                             </div>
                             <div className="form-group">
+                                <label>Farmer Name (Owner)</label>
+                                <div className="input-wrapper">
+                                    <input
+                                        type="text"
+                                        placeholder="e.g. Niket Farmer"
+                                        value={newItemFarmer}
+                                        onChange={(e) => setNewItemFarmer(e.target.value)}
+                                        required
+                                        disabled={isSubmitting}
+                                    />
+                                </div>
+                            </div>
+                            <div className="form-group">
                                 <label>Category</label>
                                 <select
                                     className="filter-select"
-                                    style={{ width: '100%', padding: '12px' }}
+                                    style={{ width: '100%', padding: '12px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff' }}
                                     value={newItemCategory}
                                     onChange={(e) => setNewItemCategory(e.target.value)}
                                     disabled={isSubmitting}
