@@ -1,4 +1,4 @@
-import { useState, Suspense } from 'react';
+import { useState, Suspense, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Canvas } from '@react-three/fiber';
 import { Stars } from '@react-three/drei';
@@ -16,6 +16,39 @@ function AuthBg() {
     );
 }
 
+function PasswordStrength({ password }) {
+    const getStrength = (pw) => {
+        if (!pw) return { score: 0, label: '', color: '' };
+        let score = 0;
+        if (pw.length >= 6) score++;
+        if (pw.length >= 10) score++;
+        if (/[A-Z]/.test(pw)) score++;
+        if (/[0-9]/.test(pw)) score++;
+        if (/[^A-Za-z0-9]/.test(pw)) score++;
+        const levels = [
+            { label: '', color: '' },
+            { label: 'Weak', color: '#ef4444' },
+            { label: 'Fair', color: '#f59e0b' },
+            { label: 'Good', color: '#eab308' },
+            { label: 'Strong', color: '#22c55e' },
+            { label: 'Very Strong', color: '#10b981' },
+        ];
+        return { score, ...levels[score] };
+    };
+    const { score, label, color } = getStrength(password);
+    if (!password) return null;
+    return (
+        <div className="auth3-strength">
+            <div className="auth3-strength-bars">
+                {[1, 2, 3, 4, 5].map(i => (
+                    <div key={i} className={`auth3-strength-bar ${i <= score ? 'active' : ''}`} style={{ '--bar-color': color }} />
+                ))}
+            </div>
+            <span className="auth3-strength-label" style={{ color }}>{label}</span>
+        </div>
+    );
+}
+
 const STEP_LABELS = ['Your Role', 'Credentials', 'Profile'];
 
 const Signup = () => {
@@ -29,6 +62,8 @@ const Signup = () => {
     const [focusedField, setFocusedField] = useState(null);
     const { signup, demoLogin } = useAuth();
     const navigate = useNavigate();
+    const [mounted, setMounted] = useState(false);
+    useEffect(() => { setMounted(true); }, []);
 
     const handle = e => setFormData({ ...formData, [e.target.name]: e.target.value });
 
@@ -79,7 +114,7 @@ const Signup = () => {
             <div className="auth3-blob auth3-blob-1" />
             <div className="auth3-blob auth3-blob-2" />
 
-            <div className="auth3-card-wrap">
+            <div className={`auth3-card-wrap ${mounted ? 'auth3-mounted' : ''}`}>
                 <div className="auth3-card">
                     {step < 4 && (
                         <Link to="/" className="auth3-logo">
@@ -160,6 +195,7 @@ const Signup = () => {
                                             {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
                                         </button>
                                     </div>
+                                    <PasswordStrength password={formData.password} />
                                 </div>
                                 <div {...fieldProps('confirmPassword')}>
                                     <label>Confirm password</label>

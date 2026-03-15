@@ -1,8 +1,8 @@
-import { useState, Suspense } from 'react';
+import { useState, Suspense, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Canvas, useFrame } from '@react-three/fiber';
+import { Canvas } from '@react-three/fiber';
 import { Stars } from '@react-three/drei';
-import { Wheat, Mail, Lock, Eye, EyeOff, ArrowRight, Shield, Zap } from 'lucide-react';
+import { Wheat, Mail, Lock, Eye, EyeOff, ArrowRight, Shield, Zap, Sparkles } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import './Auth.css';
 
@@ -11,8 +11,43 @@ function AuthBg() {
         <>
             <ambientLight intensity={0.3} />
             <pointLight position={[3, 4, 3]} intensity={1.5} color="#22c55e" />
+            <pointLight position={[-3, -2, 2]} intensity={0.6} color="#3b82f6" />
             <Stars radius={80} depth={50} count={2500} factor={4} saturation={0} fade speed={0.7} />
         </>
+    );
+}
+
+/* Password Strength Meter */
+function PasswordStrength({ password }) {
+    const getStrength = (pw) => {
+        if (!pw) return { score: 0, label: '', color: '' };
+        let score = 0;
+        if (pw.length >= 6) score++;
+        if (pw.length >= 10) score++;
+        if (/[A-Z]/.test(pw)) score++;
+        if (/[0-9]/.test(pw)) score++;
+        if (/[^A-Za-z0-9]/.test(pw)) score++;
+        const levels = [
+            { label: '', color: '' },
+            { label: 'Weak', color: '#ef4444' },
+            { label: 'Fair', color: '#f59e0b' },
+            { label: 'Good', color: '#eab308' },
+            { label: 'Strong', color: '#22c55e' },
+            { label: 'Very Strong', color: '#10b981' },
+        ];
+        return { score, ...levels[score] };
+    };
+    const { score, label, color } = getStrength(password);
+    if (!password) return null;
+    return (
+        <div className="auth3-strength">
+            <div className="auth3-strength-bars">
+                {[1, 2, 3, 4, 5].map(i => (
+                    <div key={i} className={`auth3-strength-bar ${i <= score ? 'active' : ''}`} style={{ '--bar-color': color }} />
+                ))}
+            </div>
+            <span className="auth3-strength-label" style={{ color }}>{label}</span>
+        </div>
     );
 }
 
@@ -23,8 +58,11 @@ const Login = () => {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const [focusedField, setFocusedField] = useState(null);
+    const [mounted, setMounted] = useState(false);
     const { login, demoLogin } = useAuth();
     const navigate = useNavigate();
+
+    useEffect(() => { setMounted(true); }, []);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -46,21 +84,18 @@ const Login = () => {
 
     return (
         <div className="auth3-page">
-            {/* 3D Background */}
             <div className="auth3-canvas">
                 <Canvas camera={{ position: [0, 0, 5], fov: 65 }} gl={{ alpha: true }}>
                     <Suspense fallback={null}><AuthBg /></Suspense>
                 </Canvas>
             </div>
 
-            {/* Gradient blobs */}
             <div className="auth3-blob auth3-blob-1" />
             <div className="auth3-blob auth3-blob-2" />
+            <div className="auth3-blob auth3-blob-3" />
 
-            {/* Card */}
-            <div className="auth3-card-wrap">
+            <div className={`auth3-card-wrap ${mounted ? 'auth3-mounted' : ''}`}>
                 <div className="auth3-card">
-                    {/* Logo */}
                     <Link to="/" className="auth3-logo">
                         <div className="auth3-logo-icon"><Wheat size={19} /></div>
                         <span>AgroVault</span>
@@ -113,6 +148,10 @@ const Login = () => {
                             </div>
                         </div>
 
+                        <div className="auth3-forgot">
+                            <a href="#" onClick={e => e.preventDefault()}>Forgot password?</a>
+                        </div>
+
                         <button type="submit" className="auth3-submit" disabled={loading}>
                             {loading ? (
                                 <><span className="auth3-spinner" />Signing in...</>
@@ -146,7 +185,6 @@ const Login = () => {
                     </p>
                 </div>
 
-                {/* Side features panel */}
                 <div className="auth3-side">
                     <div className="auth3-side-inner">
                         <div className="auth3-side-badge"><Zap size={13} /> Enterprise Platform</div>

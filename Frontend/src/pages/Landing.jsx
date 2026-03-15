@@ -7,7 +7,9 @@ import {
     Wheat, BarChart3, Package, Database, Wifi, Truck, FileCheck,
     ArrowRight, Shield, Zap, Target, TrendingUp, Thermometer,
     ChevronDown, CheckCircle2, Star, Activity, Award, Globe,
-    Play, Cpu, Lock, BarChart2, Layers, RefreshCw
+    Play, Cpu, Lock, BarChart2, Layers, RefreshCw, Box,
+    Sparkles, Clock, Users, Check, X, Crown, Rocket, Building2,
+    Gauge, Eye, Radio, Leaf, Server
 } from 'lucide-react';
 import './Landing.css';
 
@@ -186,6 +188,112 @@ function FeatureCard({ icon: Icon, title, desc, color, delay }) {
     );
 }
 
+/* ─── Warehouse Block Visualizer ──────────────────────── */
+const warehouseZones = [
+    { id: 'A1', zone: 'Zone A', status: 'available', capacity: 15, label: 'Cold Storage' },
+    { id: 'A2', zone: 'Zone A', status: 'occupied', capacity: 92, label: 'Cold Storage' },
+    { id: 'A3', zone: 'Zone A', status: 'occupied', capacity: 78, label: 'Cold Storage' },
+    { id: 'B1', zone: 'Zone B', status: 'available', capacity: 5, label: 'Grain Silo' },
+    { id: 'B2', zone: 'Zone B', status: 'occupied', capacity: 88, label: 'Grain Silo' },
+    { id: 'B3', zone: 'Zone B', status: 'critical', capacity: 98, label: 'Grain Silo' },
+    { id: 'C1', zone: 'Zone C', status: 'available', capacity: 22, label: 'Dry Storage' },
+    { id: 'C2', zone: 'Zone C', status: 'occupied', capacity: 65, label: 'Dry Storage' },
+    { id: 'C3', zone: 'Zone C', status: 'available', capacity: 10, label: 'Dry Storage' },
+    { id: 'D1', zone: 'Zone D', status: 'occupied', capacity: 71, label: 'Processing' },
+    { id: 'D2', zone: 'Zone D', status: 'critical', capacity: 96, label: 'Processing' },
+    { id: 'D3', zone: 'Zone D', status: 'available', capacity: 30, label: 'Processing' },
+];
+
+function WarehouseBlock({ block, index }) {
+    const [hovered, setHovered] = useState(false);
+    const statusColors = {
+        available: { bg: 'rgba(34,197,94,0.15)', border: 'rgba(74,222,128,0.5)', fill: '#22c55e', text: 'Available' },
+        occupied: { bg: 'rgba(245,158,11,0.15)', border: 'rgba(251,191,36,0.5)', fill: '#f59e0b', text: 'In Use' },
+        critical: { bg: 'rgba(239,68,68,0.15)', border: 'rgba(248,113,113,0.5)', fill: '#ef4444', text: 'Near Full' },
+    };
+    const s = statusColors[block.status];
+
+    return (
+        <div
+            className={`wh-block ${hovered ? 'wh-block-hovered' : ''}`}
+            style={{ '--block-color': s.fill, '--block-bg': s.bg, '--block-border': s.border, animationDelay: `${index * 0.06}s` }}
+            onMouseEnter={() => setHovered(true)}
+            onMouseLeave={() => setHovered(false)}
+        >
+            <div className="wh-block-fill" style={{ height: `${block.capacity}%` }} />
+            <div className="wh-block-content">
+                <span className="wh-block-id">{block.id}</span>
+                <span className="wh-block-label">{block.label}</span>
+            </div>
+            {hovered && (
+                <div className="wh-block-tooltip">
+                    <div className="wh-tt-header">{block.zone} — Bay {block.id}</div>
+                    <div className="wh-tt-type">{block.label}</div>
+                    <div className="wh-tt-bar">
+                        <div className="wh-tt-bar-fill" style={{ width: `${block.capacity}%` }} />
+                    </div>
+                    <div className="wh-tt-status">
+                        <span className="wh-tt-dot" />
+                        {s.text} — {block.capacity}% filled
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+}
+
+/* ─── Live Activity Pulse ─────────────────────────────── */
+const liveEvents = [
+    { icon: Thermometer, text: 'Zone A temperature stabilized at 4.2°C', time: '2s ago', type: 'success' },
+    { icon: Package, text: 'New shipment received — 120 tons wheat', time: '15s ago', type: 'info' },
+    { icon: Shield, text: 'Security scan completed — all clear', time: '32s ago', type: 'success' },
+    { icon: Activity, text: 'Sensor #247 calibration complete', time: '1m ago', type: 'info' },
+    { icon: Gauge, text: 'Zone D capacity nearing threshold', time: '2m ago', type: 'warning' },
+    { icon: Truck, text: 'Dispatch #891 en route — ETA 4h', time: '3m ago', type: 'info' },
+    { icon: Eye, text: 'AI anomaly scan — no issues detected', time: '5m ago', type: 'success' },
+    { icon: Radio, text: 'IoT network health: 99.8% uptime', time: '7m ago', type: 'success' },
+];
+
+/* ─── Pricing Data ────────────────────────────────────── */
+const pricingPlans = [
+    {
+        name: 'Starter',
+        price: '0',
+        period: 'Free forever',
+        desc: 'Perfect for small farms getting started with smart storage.',
+        icon: Leaf,
+        color: '#22c55e',
+        features: ['Up to 5 sensors', 'Basic dashboard', 'Email alerts', '1 user', 'Community support'],
+        notIncluded: ['AI predictions', 'API access', 'Custom reports'],
+        cta: 'Get Started Free',
+        popular: false,
+    },
+    {
+        name: 'Professional',
+        price: '149',
+        period: '/month',
+        desc: 'For growing operations that need full control and insights.',
+        icon: Rocket,
+        color: '#3b82f6',
+        features: ['Unlimited sensors', 'Advanced analytics', 'AI predictions', 'Real-time alerts', '10 users', 'API access', 'Priority support'],
+        notIncluded: ['White-label'],
+        cta: 'Start Free Trial',
+        popular: true,
+    },
+    {
+        name: 'Enterprise',
+        price: 'Custom',
+        period: 'Tailored pricing',
+        desc: 'For large-scale operations with custom requirements.',
+        icon: Crown,
+        color: '#a78bfa',
+        features: ['Everything in Pro', 'Unlimited users', 'White-label option', 'Dedicated account manager', 'Custom integrations', 'SLA guarantee', 'On-premise option', '24/7 phone support'],
+        notIncluded: [],
+        cta: 'Contact Sales',
+        popular: false,
+    },
+];
+
 /* ─── Data ────────────────────────────────────────────── */
 const features = [
     { icon: BarChart3, title: 'Real-Time Dashboard', desc: 'Unified command center with live KPIs, facility health scores, and instant anomaly detection.', color: '#22c55e' },
@@ -217,15 +325,33 @@ const faqs = [
     { q: 'Do you offer a free trial?', a: 'Yes — 30 days completely free, no credit card required. You get full access to all Professional features during the trial.' },
 ];
 
+const techStack = [
+    { icon: Cpu, name: 'AI Engine', desc: 'Deep learning models for anomaly detection & prediction' },
+    { icon: Server, name: 'Edge Computing', desc: 'On-premise processing for sub-second response times' },
+    { icon: Lock, name: 'Zero Trust', desc: 'End-to-end encryption with role-based access control' },
+    { icon: Globe, name: 'Cloud Native', desc: 'Multi-region deployment with 99.9% uptime guarantee' },
+    { icon: Radio, name: 'IoT Gateway', desc: 'MQTT, CoAP, and HTTP — connect any sensor' },
+    { icon: Layers, name: 'Data Lake', desc: 'Unlimited historical data retention and analytics' },
+];
+
 /* ─── Main Component ──────────────────────────────────── */
 export default function Landing() {
     const [openFaq, setOpenFaq] = useState(null);
     const [scrollY, setScrollY] = useState(0);
+    const [activePulseIndex, setActivePulseIndex] = useState(0);
 
     useEffect(() => {
         const onScroll = () => setScrollY(window.scrollY);
         window.addEventListener('scroll', onScroll, { passive: true });
         return () => window.removeEventListener('scroll', onScroll);
+    }, []);
+
+    // Live pulse cycling
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setActivePulseIndex(prev => (prev + 1) % liveEvents.length);
+        }, 3000);
+        return () => clearInterval(interval);
     }, []);
 
     return (
@@ -306,6 +432,77 @@ export default function Landing() {
                 </div>
             </div>
 
+            {/* ═══ WAREHOUSE BLOCK VISUALIZER (NEW) ═══════════════ */}
+            <section className="lp-section lp-warehouse-section" id="warehouse-viz">
+                <div className="container">
+                    <Reveal>
+                        <div className="lp-section-label"><Box size={12} style={{ marginRight: 6, verticalAlign: 'middle' }} /> Live View</div>
+                        <h2 className="lp-section-h2">See your warehouse at a glance.</h2>
+                        <p className="lp-section-sub">Interactive block visualization shows real-time capacity across all zones. Instantly spot available space, optimize allocation, and prevent overcrowding.</p>
+                    </Reveal>
+
+                    <div className="wh-visualizer-wrap">
+                        <div className="wh-legend">
+                            <span className="wh-legend-item"><span className="wh-legend-dot" style={{ background: '#22c55e' }} /> Available</span>
+                            <span className="wh-legend-item"><span className="wh-legend-dot" style={{ background: '#f59e0b' }} /> In Use</span>
+                            <span className="wh-legend-item"><span className="wh-legend-dot" style={{ background: '#ef4444' }} /> Near Full</span>
+                        </div>
+                        <div className="wh-grid">
+                            {warehouseZones.map((block, i) => (
+                                <WarehouseBlock key={block.id} block={block} index={i} />
+                            ))}
+                        </div>
+                        <div className="wh-summary">
+                            <div className="wh-summary-item">
+                                <span className="wh-summary-val"><Counter value={4} /></span>
+                                <span className="wh-summary-label">Zones Available</span>
+                            </div>
+                            <div className="wh-summary-divider" />
+                            <div className="wh-summary-item">
+                                <span className="wh-summary-val"><Counter value={12} /></span>
+                                <span className="wh-summary-label">Total Bays</span>
+                            </div>
+                            <div className="wh-summary-divider" />
+                            <div className="wh-summary-item">
+                                <span className="wh-summary-val"><Counter value={62} suffix="%" /></span>
+                                <span className="wh-summary-label">Avg Utilization</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* ═══ LIVE ACTIVITY PULSE (NEW) ══════════════════════ */}
+            <section className="lp-section lp-pulse-section">
+                <div className="container">
+                    <Reveal>
+                        <div className="lp-section-label"><Activity size={12} style={{ marginRight: 6, verticalAlign: 'middle' }} /> Live Pulse</div>
+                        <h2 className="lp-section-h2">Always-on intelligence.</h2>
+                        <p className="lp-section-sub">AgroVault never sleeps. Watch real-time events streaming from sensors, AI engines, and logistics systems across your entire operation.</p>
+                    </Reveal>
+                    <div className="lp-pulse-feed">
+                        {liveEvents.map((evt, i) => {
+                            const Icon = evt.icon;
+                            const isActive = i === activePulseIndex;
+                            return (
+                                <Reveal key={i} delay={i * 0.05}>
+                                    <div className={`lp-pulse-item ${isActive ? 'lp-pulse-active' : ''} lp-pulse-${evt.type}`}>
+                                        <div className="lp-pulse-icon-wrap">
+                                            <Icon size={16} />
+                                            {isActive && <span className="lp-pulse-ring" />}
+                                        </div>
+                                        <div className="lp-pulse-text">
+                                            <span>{evt.text}</span>
+                                            <span className="lp-pulse-time"><Clock size={10} /> {evt.time}</span>
+                                        </div>
+                                    </div>
+                                </Reveal>
+                            );
+                        })}
+                    </div>
+                </div>
+            </section>
+
             {/* ═══ WHAT IS AGROVAULT ════════════════════════════════ */}
             <section className="lp-section lp-intro-section">
                 <div className="container">
@@ -345,6 +542,31 @@ export default function Landing() {
                     <div className="lp-features-grid">
                         {features.map((f, i) => (
                             <FeatureCard key={f.title} {...f} delay={i * 0.08} />
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* ═══ TECHNOLOGY STACK (NEW) ═══════════════════════════ */}
+            <section className="lp-section lp-tech-section" id="technology">
+                <div className="container">
+                    <Reveal>
+                        <div className="lp-section-label"><Server size={12} style={{ marginRight: 6, verticalAlign: 'middle' }} /> Technology</div>
+                        <h2 className="lp-section-h2">Built on cutting-edge infrastructure.</h2>
+                        <p className="lp-section-sub">Enterprise-grade technology stack powering thousands of agricultural operations worldwide.</p>
+                    </Reveal>
+                    <div className="lp-tech-grid">
+                        {techStack.map((tech, i) => (
+                            <Reveal key={tech.name} delay={i * 0.08}>
+                                <div className="lp-tech-card">
+                                    <div className="lp-tech-icon-wrap">
+                                        <tech.icon size={24} />
+                                        <div className="lp-tech-glow" />
+                                    </div>
+                                    <h3>{tech.name}</h3>
+                                    <p>{tech.desc}</p>
+                                </div>
+                            </Reveal>
                         ))}
                     </div>
                 </div>
@@ -430,6 +652,52 @@ export default function Landing() {
                                 </div>
                             </Reveal>
                         ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* ═══ PRICING (NEW) ═══════════════════════════════════ */}
+            <section className="lp-section lp-pricing-section" id="pricing">
+                <div className="container">
+                    <Reveal>
+                        <div className="lp-section-label"><Sparkles size={12} style={{ marginRight: 6, verticalAlign: 'middle' }} /> Pricing</div>
+                        <h2 className="lp-section-h2">Simple, transparent pricing.</h2>
+                        <p className="lp-section-sub">Start free, scale as you grow. No hidden fees, no surprises. Cancel anytime.</p>
+                    </Reveal>
+                    <div className="lp-pricing-grid">
+                        {pricingPlans.map((plan, i) => {
+                            const PlanIcon = plan.icon;
+                            return (
+                                <Reveal key={plan.name} delay={i * 0.12}>
+                                    <div className={`lp-pricing-card ${plan.popular ? 'lp-pricing-popular' : ''}`} style={{ '--plan-color': plan.color }}>
+                                        {plan.popular && <div className="lp-pricing-badge">Most Popular</div>}
+                                        <div className="lp-pricing-icon"><PlanIcon size={22} /></div>
+                                        <h3>{plan.name}</h3>
+                                        <div className="lp-pricing-price">
+                                            {plan.price !== 'Custom' && <span className="lp-pricing-currency">$</span>}
+                                            <span className="lp-pricing-amount">{plan.price}</span>
+                                            <span className="lp-pricing-period">{plan.period}</span>
+                                        </div>
+                                        <p className="lp-pricing-desc">{plan.desc}</p>
+                                        <div className="lp-pricing-features">
+                                            {plan.features.map(f => (
+                                                <div key={f} className="lp-pricing-feature">
+                                                    <Check size={14} className="lp-pricing-check" /> {f}
+                                                </div>
+                                            ))}
+                                            {plan.notIncluded.map(f => (
+                                                <div key={f} className="lp-pricing-feature lp-pricing-excluded">
+                                                    <X size={14} /> {f}
+                                                </div>
+                                            ))}
+                                        </div>
+                                        <Link to="/signup" className={`lp-pricing-cta ${plan.popular ? 'lp-pricing-cta-primary' : ''}`}>
+                                            {plan.cta} <ArrowRight size={15} />
+                                        </Link>
+                                    </div>
+                                </Reveal>
+                            );
+                        })}
                     </div>
                 </div>
             </section>
